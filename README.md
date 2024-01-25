@@ -8,9 +8,17 @@ SAÉ de BUT2 - période C
 - [Clothilde P.](https://github.com/TorielLink)
 
 ## Lancement de l'application
-Lancez la commande suivante :
-```sh
-npx expo start
+Installation de dépendances :
+```shell
+npm install
+```
+Lancement :
+```shell
+npm start
+```
+Lancement dans un navigateur web :
+```shell
+npm run web
 ```
 
 ## Languages utilisés

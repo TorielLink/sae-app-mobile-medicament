@@ -20,6 +20,10 @@ Lancement dans un navigateur web :
 ```shell
 npm run web
 ```
+Pour utiliser un émulateur, définissez la variable d'environement ANDROID_HOME, par exemple :
+```shell
+export ANDROID_HOME=$HOME/Android/Sdk
+```
 
 ## Languages utilisés
 ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)

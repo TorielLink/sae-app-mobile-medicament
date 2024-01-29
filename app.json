@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "application-mobile-traitements",
-    "slug": "application-mobile-traitements",
+    "name": "sae-app-mobile",
+    "slug": "sae-app-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.remilem.saeAppMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "adc3ae8c-69e5-41dc-b44e-8cd9242bfbc2"
+      }
+    },
+    "owner": "remi-l"
   }
 }

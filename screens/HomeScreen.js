@@ -1,12 +1,13 @@
 import React from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 
+/*
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Result from '../Result';
 import styles from '../SearchBar.module.css';
 
-/*
+
 //--------------SEARCHBAR--------------
 const SearchBar = () => {
     const [value, setValue] = useState(''); // Here we'll store the value of the search bar's text input

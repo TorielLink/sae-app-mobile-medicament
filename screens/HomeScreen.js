@@ -1,30 +1,31 @@
 import React from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 
-/*
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Result from '../Result';
 import styles from '../SearchBar.module.css';
 
+const dataBaseCID = [
+    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo"
+]
+
 
 //--------------SEARCHBAR--------------
 const SearchBar = () => {
-    const [value, setValue] = useState(''); // Here we'll store the value of the search bar's text input
-    const [suggestions, setSuggestions] = useState([]); // This is where we'll store the retrieved suggestions
-    const [hideSuggestions, setHideSuggestions] = useState(true);
-    const [result, setResult] = useState(null);
+    const [value, setValue] = useState('');
+    //const [suggestions, setSuggestions] = useState([]);
+    //const [hideSuggestions, setHideSuggestions] = useState(true);
+    const [result, setResult] = useState([]);
 
     const findResult = (title) => {
-        setResult(suggestions.find((suggestion) => suggestion.title === title));
+        //setResult(suggestions.find((suggestion) => suggestion.title === title));
     };
 
     useEffect(() => {
-        const fetchData = async () => {
+        /*const fetchData = async () => {
             try {
-                const { data } = await axios.get(
-                    `https://dummyjson.com/products/search?q=${value}`
-                );
+                // const { data } = ;
 
                 setSuggestions(data.products);
             } catch (error) {
@@ -32,28 +33,39 @@ const SearchBar = () => {
             }
         };
 
-        fetchData();
+        fetchData();*/
+
+        setResult([])
+
+        console.log(value + ' '+ result.toString())
+        dataBaseCID.map((item) => {
+            if(item.includes(value)) {
+                setResult((prevResult) => [...prevResult, item])
+            }
+        })
+
     }, [value]);
 
     return (
         <>
             <div className={styles.container}>
                 <input
-                    onFocus={() => setHideSuggestions(false)}
-                    onBlur={async () => {
+                    //onFocus={() => setHideSuggestions(false)}
+                    /*onBlur={async () => {
                         setTimeout(() => {
                             setHideSuggestions(true);
                         }, 200);
-                    }}
+                    }}*/
                     type="text"
                     className={styles.textbox}
-                    placeholder="Search data..."
+                    placeholder="Entrez un CIP"
                     value={value}
                     onChange={(e) => {
                         setValue(e.target.value);
+                        console.log('HEY!')
                     }}
                 />
-                <div
+                {/*<div
                     className={`${styles.suggestions} ${
                         hideSuggestions && styles.hidden
                     }`}
@@ -66,17 +78,22 @@ const SearchBar = () => {
                             {suggestion.title}
                         </div>
                     ))}
-                </div>
+                </div>*/}
             </div>
-            {result && <Result {...result} />}
+            <ul>
+                {result.map((item, index) => {
+                    <li key={index}>{item}</li>
+                })}
+            </ul>
+            {/*result && <Result {...result} />*/}
         </>
     );
 };
- */
 
 const Screen1 = props => {
     return (
         <View style={stylesScreen1.screen}>
+            <SearchBar/>
             <Text>Screen 1</Text>
         </View>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 const Screen2 = props => {
     return (

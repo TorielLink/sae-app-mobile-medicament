@@ -1,10 +1,7 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import Result from '../Result';
-import styles from '../SearchBar.module.css';
 
 const dataBaseCID = [
     "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo"
@@ -48,7 +45,7 @@ const SearchBar = () => {
 
     return (
         <>
-            <div className={styles.container}>
+            <div>
                 <input
                     //onFocus={() => setHideSuggestions(false)}
                     /*onBlur={async () => {
@@ -57,7 +54,6 @@ const SearchBar = () => {
                         }, 200);
                     }}*/
                     type="text"
-                    className={styles.textbox}
                     placeholder="Entrez un CIP"
                     value={value}
                     onChange={(e) => {
@@ -85,7 +81,7 @@ const SearchBar = () => {
                     <li key={index}>{item}</li>
                 })}
             </ul>
-            {/*result && <Result {...result} />*/}
+            {/*result */}
         </>
     );
 };

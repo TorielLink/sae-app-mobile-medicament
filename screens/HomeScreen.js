@@ -89,7 +89,7 @@ const SearchBar = () => {
 const Screen1 = props => {
     return (
         <View style={stylesScreen1.screen}>
-            <SearchBar/>
+            {/*<SearchBar/>*/}
             <Text>Screen 1</Text>
         </View>
     );

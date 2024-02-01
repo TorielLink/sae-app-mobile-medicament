@@ -32,14 +32,7 @@ const SearchBar = () => {
 
         fetchData();*/
 
-        setResult([])
-
-        console.log(value + ' '+ result.toString())
-        dataBaseCID.map((item) => {
-            if(item.includes(value)) {
-                setResult((prevResult) => [...prevResult, item])
-            }
-        })
+        setResult(dataBaseCID.filter((item) => item.includes(value)))
 
     }, [value]);
 
@@ -56,10 +49,7 @@ const SearchBar = () => {
                     type="text"
                     placeholder="Entrez un CIP"
                     value={value}
-                    onChange={(e) => {
-                        setValue(e.target.value);
-                        console.log('HEY!')
-                    }}
+                    onChange={(e) => setValue(e.target.value)}
                 />
                 {/*<div
                     className={`${styles.suggestions} ${
@@ -77,9 +67,9 @@ const SearchBar = () => {
                 </div>*/}
             </div>
             <ul>
-                {result.map((item, index) => {
+                {result.map((item, index) =>
                     <li key={index}>{item}</li>
-                })}
+                )}
             </ul>
             {/*result */}
         </>

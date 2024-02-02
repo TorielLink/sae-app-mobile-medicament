@@ -1,96 +1,53 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Searchbar} from 'react-native-paper';
 
-import { useEffect, useState } from 'react';
-
-const dataBaseCID = [
-    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo"
+const dataBaseCIP = [
+    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo", "esteban"
 ]
 
-
-//--------------SEARCHBAR--------------
-const SearchBar = () => {
-    const [value, setValue] = useState('');
-    //const [suggestions, setSuggestions] = useState([]);
-    //const [hideSuggestions, setHideSuggestions] = useState(true);
-    const [result, setResult] = useState([]);
-
-    const findResult = (title) => {
-        //setResult(suggestions.find((suggestion) => suggestion.title === title));
-    };
-
-    useEffect(() => {
-        /*const fetchData = async () => {
-            try {
-                // const { data } = ;
-
-                setSuggestions(data.products);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchData();*/
-
-        setResult(dataBaseCID.filter((item) => item.includes(value)))
-
-    }, [value]);
+export default function Home() {
+    const [searchQuery, setSearchQuery] = React.useState('');
 
     return (
-        <>
-            <div>
-                <input
-                    //onFocus={() => setHideSuggestions(false)}
-                    /*onBlur={async () => {
-                        setTimeout(() => {
-                            setHideSuggestions(true);
-                        }, 200);
-                    }}*/
-                    type="text"
-                    placeholder="Entrez un CIP"
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                />
-                {/*<div
-                    className={`${styles.suggestions} ${
-                        hideSuggestions && styles.hidden
-                    }`}
-                >
-                    {suggestions.map((suggestion) => (
-                        <div
-                            className={styles.suggestion}
-                            onClick={() => findResult(suggestion.title)}
-                        >
-                            {suggestion.title}
-                        </div>
-                    ))}
-                </div>*/}
-            </div>
-            <ul>
-                {result.map((item, index) =>
-                    <li key={index}>{item}</li>
-                )}
-            </ul>
-            {/*result */}
-        </>
-    );
-};
-
-const Screen1 = props => {
-    return (
-        <View style={stylesScreen1.screen}>
-            {/*<SearchBar/>*/}
-            <Text>Screen 1</Text>
+        <View style={stylesHome.screen}>
+            <Searchbar
+                placeholder="Insérer un CIP"
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                iconColor={"#7DAE32"}
+                style={{ backgroundColor: '#E4F2CF' }}
+            />
         </View>
     );
-};
+}
 
-const stylesScreen1 = StyleSheet.create({
+const stylesHome = StyleSheet.create({
     screen: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    safe: {
+        flex: 1,
+        backgroundColor: '#252b33',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        flexDirection: 'column',
+    },
+    container2: {
+        backgroundColor: '#252b33',
+        padding: 18,
+    },
+    input: {
+        height: 48,
+        padding: 12,
+        fontSize: 16,
+        backgroundColor: '#fff',
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#ddd',
+    },
 });
-
-export default Screen1;

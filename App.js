@@ -14,9 +14,9 @@ export default function App() {
     return (
         <NavigationContainer>
             <Tab.Navigator initialRouteName="Home">
-                <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: makeIconRender("cog") }}/>
-                <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: makeIconRender("home") }}/>
-                <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: makeIconRender("baby-face-outline") }}/>
+                <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: makeIconRender("cog"), tabBarActiveTintColor: "#7DAE32" }} />
+                <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: makeIconRender("home"), tabBarActiveTintColor: "#7DAE32" }}/>
+                <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: makeIconRender("baby-face-outline"), tabBarActiveTintColor: "#7DAE32" }}/>
             </Tab.Navigator>
         </NavigationContainer>
     );

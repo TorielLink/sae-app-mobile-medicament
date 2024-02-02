@@ -14,9 +14,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        //fontSize: 2,
-        //marginTop: '1rem',
-        //fontFamily: '"Goudy Bookletter 1911", sans-serif',
+        fontSize: 30,
+        marginTop: 20,
+        fontFamily: 'Goudy Bookletter 1911", sans-serif',
     }
 });
 

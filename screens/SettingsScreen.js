@@ -1,15 +1,61 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Switch, StyleSheet, Alert } from 'react-native';
+import { Notifications } from 'expo';
 import { Camera } from 'expo-camera';
 
-export default function SettingsScreen() {
+export default async function SettingsScreen() {
     const [notificationEnabled, setNotificationEnabled] = useState(false);
-    const [locationEnabled, setLocationEnabled] = useState(false);
+    const [localisationEnabled, setLocalisationEnabled] = useState(false);
     const [cameraEnabled, setCameraEnabled] = useState(false);
+    const [hasCameraPermission, setHasCameraPermission] = useState(null);
+    const [hasNotificationPermission, setHasNotificationPermission] = useState(null);
+
+    useEffect(() => {
+        checkCameraPermission();
+        checkNotificationPermission();
+    }, []);
+
+    const checkCameraPermission = async () => {
+        const {status} = await Camera.requestPermissionsAsync();
+        setHasCameraPermission(status === 'granted');
+    };
+    const checkNotificationPermission = async () => {
+        const {status} = await Notification.requestPermissionsAsync();
+        setHasNotificationPermission(status === 'granted');
+    };
 
     const toggleNotificationSwitch = () => setNotificationEnabled(previousState => !previousState);
-    const toggleLocationSwitch = () => setLocationEnabled(previousState => !previousState);
-    const toggleCameraSwitch = () => setCameraEnabled(previousState => !previousState);
+    const toggleLocalisationSwitch = () => s
+    if (!hasNotificationPermission) {
+        const {status} = await Notification.requestPermissionsAsync();
+        if (status === 'granted') {
+            setNotificationEnabled(true);
+        } else {
+            Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès aux Notification.');
+            setNotificationEnabled(false);
+        }
+    } else {
+        setNotificationEnabled(previousState => !previousState);
+        if (!notificationEnabled) {
+            await Notifications.requestPermissionsAsync();
+        }
+    }
+    const toggleCameraSwitch = async () => {
+        if (!hasCameraPermission) {
+            const { status } = await Camera.requestPermissionsAsync();
+            if (status === 'granted') {
+                setCameraEnabled(true);
+            } else {
+                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la caméra.');
+                setCameraEnabled(false);
+            }
+        } else {
+            setCameraEnabled(previousState => !previousState);
+            if (!cameraEnabled) {
+                await Camera.requestPermissionsAsync();
+            }
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -27,10 +73,10 @@ export default function SettingsScreen() {
                 <Text>Autoriser la localisation</Text>
                 <Switch
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={locationEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    thumbColor={localisationEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleLocationSwitch}
-                    value={locationEnabled}
+                    onValueChange={toggleLocalitionSwitch}
+                    value={localisationEnabled}
                 />
             </View>
             <View style={styles.setting}>

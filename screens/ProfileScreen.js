@@ -2,7 +2,10 @@ import React from 'react';
 import {View, Text, StyleSheet, Linking} from 'react-native';
 import { Button } from 'react-native-paper';
 
-const Screen2 = props => {
+const Screen2 = () => {
+    const contactUs = () => {
+        Linking.openURL('mailto:service.technique@AppMobile.com');//TODO
+    };
     return (
         <View style={styles.screen}>
             <Text style={styles.title}>Compte utilisateur</Text>

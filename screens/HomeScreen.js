@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {Searchbar} from 'react-native-paper';
 
 const dataBaseCIP = [
-    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo", "esteban"
+    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo", "esteban",
 ]
 
 export default function Home() {

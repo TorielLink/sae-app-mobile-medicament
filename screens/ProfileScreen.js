@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         marginTop: 20,
         marginBottom: 30,
-        fontFamily: 'Goudy Bookletter 1911", sans-serif',
     },
     buttonStyle: {
         marginBottom: 10,

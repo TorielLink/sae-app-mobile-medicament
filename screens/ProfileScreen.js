@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Linking} from 'react-native';
 import { Button } from 'react-native-paper';
 
 const Screen2 = props => {
@@ -51,9 +51,7 @@ function changeProfileInfos() {
 function changePills() {
     //TODO
 }
-function contactUs() {
-    //TODO
-}
+
 function disconnectProfile() {
     //TODO
 }

@@ -53,15 +53,15 @@ export default function SettingsScreen() {
         <View style={styles.container}>
             <View style={styles.setting}>
                 <Text>Notifications</Text>
-                <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} />
+                <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
             </View>
             <View style={styles.setting}>
                 <Text>Autoriser la localisation</Text>
-                <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch}/>
+                <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch} color={"#7DAE32"} />
             </View>
             <View style={styles.setting}>
                 <Text>Autoriser la caméra</Text>
-                <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}/>
+                <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
             </View>
             {cameraAccess && <Camera style={styles.camera} />}
         </View>

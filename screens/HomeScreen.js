@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Searchbar} from 'react-native-paper';
+import { CameraView } from "expo-camera/next";
 
 const dataBaseCIP = [
     "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo", "esteban",
@@ -8,7 +9,6 @@ const dataBaseCIP = [
 
 export default function Home() {
     const [searchQuery, setSearchQuery] = React.useState('');
-
     return (
         <View style={stylesHome.screen}>
             <Searchbar
@@ -18,6 +18,8 @@ export default function Home() {
                 iconColor={"#7DAE32"}
                 style={{ backgroundColor: '#E4F2CF' }}
             />
+            <CameraView barcodeScannerSettings={{barCodeTypes: ['datamatrix']}} facing={'back'}>
+            </CameraView>
         </View>
     );
 }
@@ -36,10 +38,6 @@ const stylesHome = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         flexDirection: 'column',
-    },
-    container2: {
-        backgroundColor: '#252b33',
-        padding: 18,
     },
     input: {
         height: 48,

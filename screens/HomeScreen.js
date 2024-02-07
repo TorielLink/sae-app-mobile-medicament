@@ -1,23 +1,14 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Searchbar} from 'react-native-paper';
+import SearchbarCIP from '../components/SearchbarCIP';
+import TestBD from '../components/testBD';
 import { CameraView } from "expo-camera/next";
 
-const dataBaseCIP = [
-    "coucou", "cou", "loup", "mou", "dodo", "beau", "cloclo", "esteban",
-]
-
 export default function Home() {
-    const [searchQuery, setSearchQuery] = React.useState('');
     return (
         <View style={stylesHome.screen}>
-            <Searchbar
-                placeholder="Insérer un CIP"
-                onChangeText={setSearchQuery}
-                value={searchQuery}
-                iconColor={"#7DAE32"}
-                style={{ backgroundColor: '#E4F2CF' }}
-            />
+            <SearchbarCIP></SearchbarCIP>
+            <TestBD></TestBD>
             <CameraView barcodeScannerSettings={{barCodeTypes: ['datamatrix']}} facing={'back'}>
             </CameraView>
         </View>

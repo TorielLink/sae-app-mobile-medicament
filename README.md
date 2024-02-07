@@ -12,15 +12,19 @@ Installation de dépendances :
 ```shell
 npm install
 ```
-Lancement :
+Lancement du serveur :
+```shell
+node server/server.js
+```
+Lancement de l'application :
 ```shell
 npm start
 ```
-Lancement dans un navigateur web :
+Lancement de l'application dans un navigateur web :
 ```shell
 npm run web
 ```
-Pour utiliser un émulateur, définissez la variable d'environement ANDROID_HOME, par exemple :
+Pour utiliser un émulateur, définissez la variable d'environnement ANDROID_HOME, par exemple :
 ```shell
 export ANDROID_HOME=$HOME/Android/Sdk
 ```

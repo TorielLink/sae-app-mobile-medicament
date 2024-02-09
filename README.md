@@ -3,6 +3,8 @@
 SAÉ de BUT2 - période C
 ## Auteurs
 
+[//]: [![Contributors](https://contrib.rocks/image?anon=1&repo=TorielLink/SAE-AppMobile)](https://github.com/TorielLink/SAE-AppMobile/graphs/contributors)
+
 - [Rémi L.](https://github.com/remi-lem)
 - [Esteban C.R.](https://github.com/EstebanCRz)
 - [Clothilde P.](https://github.com/TorielLink)

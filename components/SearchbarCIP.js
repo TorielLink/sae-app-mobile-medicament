@@ -11,6 +11,7 @@ export default function SearchbarCIP() {
         <Searchbar
             placeholder="Insérer un CIP"
             onChangeText={setSearchQuery}
+            keyboardType={"numeric"}
             value={searchQuery}
             iconColor={"#7DAE32"}
             style={{ backgroundColor: '#E4F2CF' }}

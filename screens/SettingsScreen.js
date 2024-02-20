@@ -6,9 +6,9 @@ import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
 
 export default function SettingsScreen() {
-    const [notificationEnabled, setNotificationEnabled] = useState(false);
-    const [localisationEnabled, setLocalisationEnabled] = useState(false);
-    const [cameraAccess, setCameraAccess] = useState(false);
+    const [notificationEnabled, setNotificationEnabled] = useState(false);//TODO
+    const [localisationEnabled, setLocalisationEnabled] = useState(false);//TODO
+    const [cameraAccess, setCameraAccess] = useState(false);//TODO + ca lance des warnings sur telephone
 
     const toggleNotificationSwitch = async () => {
         if (notificationEnabled) {

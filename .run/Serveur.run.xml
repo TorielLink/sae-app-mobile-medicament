@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Serveur" type="NodeJSConfigurationType" path-to-node="node" path-to-js-file="server/server.js" working-dir="$PROJECT_DIR$/">
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeStartBrowserRunConfigurationExtension">
+      <browser url="http://localhost:3000/medoc" />
+    </EXTENSION>
+    <method v="2" />
+  </configuration>
+</component>

@@ -9,8 +9,8 @@ export default function Home() {
         <View style={stylesHome.screen}>
             <SearchbarCIP></SearchbarCIP>
             <TestBD></TestBD>
-            <CameraView barcodeScannerSettings={{barCodeTypes: ['datamatrix']}} facing={'back'}>
-            </CameraView>
+            {/* <CameraView barcodeScannerSettings={{barCodeTypes: ['datamatrix']}} facing={'back'}> </CameraView>
+            //TODO remettre mais c'est infernal les demandes d'autorisations */}
         </View>
     );
 }

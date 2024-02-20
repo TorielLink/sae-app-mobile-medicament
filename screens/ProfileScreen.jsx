@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Linking} from 'react-native';
-import { Button } from 'react-native-paper';
+import {Button, TextInput} from 'react-native-paper';
 
 const Screen2 = () => {
     const contactUs = () => {
@@ -8,6 +8,9 @@ const Screen2 = () => {
     };
     const [userConnected, setUserConnected] = useState(false);//TODO initial state
     const [titleText, setTitleText] = useState("Compte utilisateur");
+    const [firstName, setFirstName] = useState('');
+    const [password, setPassword] = useState('');
+    const [showLoginForm, setShowLoginForm] = useState(false);
     return (
         <View style={styles.screen}>
             <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
@@ -22,9 +25,27 @@ const Screen2 = () => {
                         </Button>
                     </View>}
 
-                {!userConnected && <Button icon="lan-connect" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                {(!userConnected && !showLoginForm) && <Button icon="lan-connect" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                     Me connecter
                 </Button>}
+
+                {showLoginForm &&
+                <View>
+                    <TextInput
+                        label="Prénom"
+                        value={firstName}
+                        onChangeText={text => setFirstName(text)}
+                    />
+                    <TextInput
+                        label="Mot de passe"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        secureTextEntry={true}
+                    />
+                    <Button icon="chevron-right-circle-outline" mode="contained" onPress={submitLoginForm} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        Valider
+                    </Button>
+                </View>}
 
                 <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                     Nous contacter
@@ -59,10 +80,23 @@ const Screen2 = () => {
     }
 
     function connectProfile() {
-        let userName = "Rémi";
+        setShowLoginForm(true);
+    }
+    function submitLoginForm() {
+        const response= fetch('http://localhost:3000/login', {//TODO MODIF
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName: firstName,
+                password: password,
+            }),
+        });
         //TODO
+        setShowLoginForm(false);
         setUserConnected(true);
-        setTitleText("Bienvenue " + userName);
+        setTitleText("Bienvenue " + firstName);
     }
 
     function deleteProfile() {

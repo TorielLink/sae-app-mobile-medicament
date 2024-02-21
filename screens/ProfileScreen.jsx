@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Linking, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
-import {assertConfigFileSearch} from "@babel/core/lib/config/validation/option-assertions";
+
+const SERVER_ADDRESS = 'http://192.168.0.3:3000'; //TODO modifier
 
 const Screen2 = () => {
     const contactUs = () => {
@@ -77,6 +78,9 @@ const Screen2 = () => {
 
     function disconnectProfile() {
         //TODO
+        setFirstName('');
+        setLastName('');
+        setPasswordUser('');
         setUserConnected(false);
         setTitleText("Compte utilisateur");
     }
@@ -86,7 +90,7 @@ const Screen2 = () => {
     }
 
     function submitLoginForm() {
-        fetch('http://localhost:3000/login', {//TODO MODIF
+        fetch(SERVER_ADDRESS + '/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,7 +101,7 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                Alert.alert('Erreur du serveur');
             }
             return response.json();
         }).then(data => {
@@ -111,7 +115,7 @@ const Screen2 = () => {
             setShowLoginForm(false);
         })
             .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+                Alert.alert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
     }
 

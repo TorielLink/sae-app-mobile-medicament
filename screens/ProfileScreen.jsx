@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking} from 'react-native';
+import {View, Text, StyleSheet, Linking, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
+import {assertConfigFileSearch} from "@babel/core/lib/config/validation/option-assertions";
 
 const Screen2 = () => {
     const contactUs = () => {
@@ -9,7 +10,8 @@ const Screen2 = () => {
     const [userConnected, setUserConnected] = useState(false);//TODO initial state
     const [titleText, setTitleText] = useState("Compte utilisateur");
     const [firstName, setFirstName] = useState('');
-    const [password, setPassword] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [passwordUser, setPasswordUser] = useState('');
     const [showLoginForm, setShowLoginForm] = useState(false);
     return (
         <View style={styles.screen}>
@@ -30,22 +32,22 @@ const Screen2 = () => {
                 </Button>}
 
                 {showLoginForm &&
-                <View>
-                    <TextInput
-                        label="Prénom"
-                        value={firstName}
-                        onChangeText={text => setFirstName(text)}
-                    />
-                    <TextInput
-                        label="Mot de passe"
-                        value={password}
-                        onChangeText={text => setPassword(text)}
-                        secureTextEntry={true}
-                    />
-                    <Button icon="chevron-right-circle-outline" mode="contained" onPress={submitLoginForm} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        Valider
-                    </Button>
-                </View>}
+                    <View>
+                        <TextInput
+                            label="Prénom"
+                            value={firstName}
+                            onChangeText={text => setFirstName(text)}
+                        />
+                        <TextInput
+                            label="Mot de passe"
+                            value={passwordUser}
+                            onChangeText={text => setPasswordUser(text)}
+                            secureTextEntry={true}
+                        />
+                        <Button icon="chevron-right-circle-outline" mode="contained" onPress={submitLoginForm} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            Valider
+                        </Button>
+                    </View>}
 
                 <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                     Nous contacter
@@ -82,21 +84,35 @@ const Screen2 = () => {
     function connectProfile() {
         setShowLoginForm(true);
     }
+
     function submitLoginForm() {
-        const response= fetch('http://localhost:3000/login', {//TODO MODIF
+        fetch('http://localhost:3000/login', {//TODO MODIF
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 firstName: firstName,
-                password: password,
+                passwordUser: passwordUser,
             }),
-        });
-        //TODO
-        setShowLoginForm(false);
-        setUserConnected(true);
-        setTitleText("Bienvenue " + firstName);
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            if(data.length === 0){
+                Alert.alert('Mauvais identifiants');
+            }
+            else {
+                setTitleText("Bienvenue " + firstName + ' ' + lastName);
+                setUserConnected(true);
+            }
+            setShowLoginForm(false);
+        })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     }
 
     function deleteProfile() {

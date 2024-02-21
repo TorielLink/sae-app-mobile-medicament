@@ -1,6 +1,10 @@
-const express = require('express');
+const express = require("express");
 const mysql = require('mysql2');
 const cors = require("cors");
+
+const app = express();
+const port = 3000;
+
 require('dotenv').config();
 // creating connection
 const connection = mysql.createConnection({
@@ -10,36 +14,37 @@ const connection = mysql.createConnection({
     database : process.env.DB_NAME
 });
 
-connection.connect();
-
-// define app
-const app = express();
+app.use(express.json());
+app.use(
+    express.urlencoded({
+        extended: true,
+    })
+);
 app.use(cors({ origin: '*' }));
 
-/**
- * Test query on drug
- */
 app.get('/medoc', function (req, res) {
-    console.log("getting medoc");
-    connection.query('SELECT * FROM Medicaments WHERE Code_CIS = 60002283', function (error, results, fields) {
-        if (error) throw error;
-        res.send(results)
-    });
+    let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283'
+    connection.query(sql, function (err, data, fields) {
+        if (err) throw err;
+        res.json(data);
+    })
 });
 
-/**
- * Login page
- */
-app.get('/login', function (req, res) {
-    console.log("user "+req.body.firstName+" is trying to login");
-    const [results, fields] = connection.execute(
-        'SELECT * FROM `Utilisateurs` WHERE `Prenom` = ? AND `Mot_De_Passe` = ?',
-        [req.body.firstName, req.body.password]
-    );
-    res.send(results)
-});
+app.post('/login', function (req, res){
+    console.log('User ' + req.body.firstName + ' is trying to login');
+    let sql = 'SELECT * FROM Utilisateurs WHERE Prenom = ? AND Mot_De_Passe = ?'
+    let values = [
+        req.body.firstName,
+        req.body.passwordUser
+    ];
+    connection.query(sql, values, function (err, data, fields) {
+        if (err) throw err;
+        res.json(data);
+        console.log(JSON.stringify(data))
+    })
 
-// start server
-app.listen(3000, () => {
-    console.log('OK');
+})
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
 });

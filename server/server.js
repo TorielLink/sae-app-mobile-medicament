@@ -22,27 +22,117 @@ app.use(
 );
 app.use(cors({ origin: '*' }));
 
+/**
+ * execution of a query on the database. The result is returned as ASYNC
+ * @param query the sql query
+ * @param values the values to use in the query
+ * @param callback the callback function
+ */
+function executeQuery(query, values, callback) {
+    connection.query(query, values, function (err, results) {
+        return callback(err, results);
+    })
+}
+
+/**
+ * Get User ID from first and last name
+ * @param firstName first name of the user
+ * @param lastName last name of the user
+ */
+function getIdUser(firstName, lastName, callback) {
+    let sql = 'SELECT Utilisateurs.Id_Utilisateur FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ?'
+    let values = [
+        firstName,
+        lastName
+    ];
+    executeQuery(sql, values, function (error, result){
+        return callback(error, result)
+    })
+}
+
+/**
+ * Test query on drug
+ * TODO : remove
+ */
 app.get('/medoc', function (req, res) {
     let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283'
-    connection.query(sql, function (err, data, fields) {
-        if (err) throw err;
-        res.json(data);
+    executeQuery(sql, [], function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
     })
 });
 
+/**
+ * Homepage of the server
+ */
+app.get('/', function (req, res){
+    res.send("Server OK, please read the documentation to know how to use it.")
+})
+
+/**
+ * Login
+ */
 app.post('/login', function (req, res){
     console.log('User ' + req.body.firstName + ' is trying to login');
-    let sql = 'SELECT * FROM Utilisateurs WHERE Prenom = ? AND Mot_De_Passe = ?'
+    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Mot_De_Passe = ?'
     let values = [
         req.body.firstName,
         req.body.passwordUser
     ];
-    connection.query(sql, values, function (err, data, fields) {
-        if (err) throw err;
-        res.json(data);
-        console.log(JSON.stringify(data))
+    executeQuery(sql, values, function(error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
     })
+})
 
+
+/**
+ * Delete profile
+ */
+app.post('/delete', function (req, res){
+    let sql1 = 'DELETE FROM Ordonnance WHERE Id_Utilisateur = ?';
+    let sql2 = 'DELETE FROM Utilisateurs WHERE Id_Utilisateur = ?';
+    let idUser = -1;
+    getIdUser(req.body.firstName, req.body.lastName, function (error, result){
+        if(error){
+            console.error(error)
+            res.status(500).json(error);
+        }
+        else {
+            idUser = result[0].Id_Utilisateur;
+            let values = [
+                idUser
+            ];
+            executeQuery(sql1, values, function (error, result) {
+                if (error) {
+                    console.error(error)
+                    res.status(500).json(error);
+                } else {
+                    executeQuery(sql2, values, function (error, result) {
+                        if (error) {
+                            console.error(error)
+                            res.status(500).json(error);
+                        } else {
+                            if (result.affectedRows === 0) {
+                                console.error("no data found // wrong ID")
+                                res.status(500).send('ERROR');
+                            } else {
+                                res.send('DELETED');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    })
 })
 
 app.listen(port, () => {

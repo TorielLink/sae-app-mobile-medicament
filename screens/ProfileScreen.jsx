@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking, Alert} from 'react-native';
+import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 
 const SERVER_ADDRESS = 'http://192.168.0.3:3000'; //TODO modifier
@@ -8,7 +8,7 @@ const Screen2 = () => {
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com');//TODO
     };
-    const [userConnected, setUserConnected] = useState(false);//TODO initial state
+    const [userConnected, setUserConnected] = useState(false);//TODO connection automatique
     const [titleText, setTitleText] = useState("Compte utilisateur");
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -38,6 +38,11 @@ const Screen2 = () => {
                             label="Prénom"
                             value={firstName}
                             onChangeText={text => setFirstName(text)}
+                        />
+                        <TextInput
+                            label="Nom de famille"
+                            value={lastName}
+                            onChangeText={text => setLastName(text)}
                         />
                         <TextInput
                             label="Mot de passe"
@@ -77,7 +82,6 @@ const Screen2 = () => {
     }
 
     function disconnectProfile() {
-        //TODO
         setFirstName('');
         setLastName('');
         setPasswordUser('');
@@ -101,12 +105,12 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                Alert.alert('Erreur du serveur');
+                showAlert('Erreur du serveur')
             }
             return response.json();
         }).then(data => {
             if(data.length === 0){
-                Alert.alert('Mauvais identifiants');
+                showAlert('Mauvais identifiants')
             }
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
@@ -115,12 +119,63 @@ const Screen2 = () => {
             setShowLoginForm(false);
         })
             .catch(error => {
-                Alert.alert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
     }
 
+    function showAlert(message){
+        if(Platform.OS === 'web'){
+            alert(message)
+        }
+        else {
+            Alert.alert(message);
+        }
+    }
+
     function deleteProfile() {
-        //TODO confirmation + delete cascade on BD (maybe svg before ?)
+        Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
+            //TODO generaliser l'alerte
+            {
+                text: 'Annuler',
+                style: 'cancel',
+            },
+            {
+                cancelable: true,
+            },
+            {
+                text: 'OK', onPress: deleteProfileConfirmed
+            }
+        ]);
+    }
+
+    function deleteProfileConfirmed() {
+        fetch(SERVER_ADDRESS + '/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                showAlert('Erreur du serveur');
+                return;
+            }
+            return response;
+        }).then(data => {
+            if(data.text() === "ERROR"){
+                showAlert('Erreur de suppression');
+            }
+            else {
+                showAlert('Compte supprimé');
+                disconnectProfile();
+            }
+        })
+            .catch(error => {
+                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+            });
     }
 };
 

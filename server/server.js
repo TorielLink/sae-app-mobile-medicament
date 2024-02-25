@@ -3,7 +3,10 @@ const mysql = require('mysql2');
 const cors = require("cors");
 
 const app = express();
+// constants
 const port = 3000;
+const MIN_LENGTH_PASSWORD_USER = 5;
+const MIN_LENGTH_NAME_USER = 1;
 
 require('dotenv').config();
 // creating connection
@@ -77,10 +80,32 @@ app.get('/', function (req, res){
  * Login
  */
 app.post('/login', function (req, res){
-    console.log('User ' + req.body.firstName + ' is trying to login');
-    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Mot_De_Passe = ?'
+    console.log('User "' + req.body.firstName + ' ' + req.body.lastName + '" is trying to login');
+    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?'
     let values = [
         req.body.firstName,
+        req.body.lastName,
+        req.body.passwordUser
+    ];
+    executeQuery(sql, values, function(error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
+    })
+})
+
+app.post('/createAccount', function (req, res){
+    if(req.body.passwordUser.length < MIN_LENGTH_PASSWORD_USER || req.body.firstName < MIN_LENGTH_NAME_USER || req.body.lastName < MIN_LENGTH_NAME_USER){
+        res.status(500).json({errorMessage: 'Un des champs est trop court.'});
+        return;
+    }
+    let sql = 'INSERT INTO Utilisateurs(Prenom, Nom_Famille, Mot_De_Passe) VALUES (?, ?, ?)'
+    let values = [
+        req.body.firstName,
+        req.body.lastName,
         req.body.passwordUser
     ];
     executeQuery(sql, values, function(error, result){

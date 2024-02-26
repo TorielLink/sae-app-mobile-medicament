@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Searchbar} from 'react-native-paper';
 
 const dataBaseCIP = [
@@ -6,7 +6,10 @@ const dataBaseCIP = [
 ]
 
 export default function SearchbarCIP() {
-    const [searchQuery, setSearchQuery] = React.useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    //TODO: connect to a database
+    //TODO: insert an scanning option
     return(
         <Searchbar
             placeholder="Insérer un CIP"

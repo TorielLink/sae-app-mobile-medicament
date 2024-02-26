@@ -1,16 +1,16 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import SearchbarCIP from '../components/SearchbarCIP';
+import DataMatrixScanner from "../components/DataMatrixScanner";
 import TestBD from '../components/testBD';
-import { CameraView } from "expo-camera/next";
+import {log} from "expo/build/devtools/logger";
 
 export default function Home() {
     return (
         <View style={stylesHome.screen}>
-            <SearchbarCIP></SearchbarCIP>
-            <TestBD></TestBD>
-            {/* <CameraView barcodeScannerSettings={{barCodeTypes: ['datamatrix']}} facing={'back'}> </CameraView>
-            //TODO remettre mais c'est infernal les demandes d'autorisations */}
+            <SearchbarCIP/>
+            <DataMatrixScanner/>
+            <TestBD/>
         </View>
     );
 }

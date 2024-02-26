@@ -11,7 +11,7 @@ export default function testBD() {
         const fetchData = async () => {
             setLoadingState(true);
             try {
-                const response = await fetch('http://192.168.0.3:3000/medoc');//TODO changer ici l'adresse
+                const response = await fetch('http://localhost:3000/medoc');//TODO changer ici l'adresse
                 const data = await response.json();
                 setJsonData(data);
             } catch (error) {

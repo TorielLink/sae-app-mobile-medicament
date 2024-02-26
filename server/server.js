@@ -34,23 +34,24 @@ app.use(cors({ origin: '*' }));
 function executeQuery(query, values, callback) {
     connection.query(query, values, function (err, results) {
         return callback(err, results);
-    })
+    });
 }
 
 /**
  * Get User ID from first and last name
  * @param firstName first name of the user
  * @param lastName last name of the user
+ * @param callback callback function
  */
 function getIdUser(firstName, lastName, callback) {
-    let sql = 'SELECT Utilisateurs.Id_Utilisateur FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ?'
+    let sql = 'SELECT Utilisateurs.Id_Utilisateur FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ?';
     let values = [
         firstName,
         lastName
     ];
     executeQuery(sql, values, function (error, result){
-        return callback(error, result)
-    })
+        return callback(error, result);
+    });
 }
 
 /**
@@ -58,7 +59,7 @@ function getIdUser(firstName, lastName, callback) {
  * TODO : remove
  */
 app.get('/medoc', function (req, res) {
-    let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283'
+    let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283';
     executeQuery(sql, [], function (error, result){
         if(error){
             res.status(500).json(error);
@@ -66,22 +67,22 @@ app.get('/medoc', function (req, res) {
         else {
             res.json(result);
         }
-    })
+    });
 });
 
 /**
  * Homepage of the server
  */
 app.get('/', function (req, res){
-    res.send("Server OK, please read the documentation to know how to use it.")
-})
+    res.send("Server OK, please read the documentation to know how to use it.");
+});
 
 /**
  * Login
  */
 app.post('/login', function (req, res){
     console.log('User "' + req.body.firstName + ' ' + req.body.lastName + '" is trying to login');
-    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?'
+    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
     let values = [
         req.body.firstName,
         req.body.lastName,
@@ -94,15 +95,15 @@ app.post('/login', function (req, res){
         else {
             res.json(result);
         }
-    })
-})
+    });
+});
 
 app.post('/createAccount', function (req, res){
     if(req.body.passwordUser.length < MIN_LENGTH_PASSWORD_USER || req.body.firstName < MIN_LENGTH_NAME_USER || req.body.lastName < MIN_LENGTH_NAME_USER){
         res.status(500).json({errorMessage: 'Un des champs est trop court.'});
         return;
     }
-    let sql = 'INSERT INTO Utilisateurs(Prenom, Nom_Famille, Mot_De_Passe) VALUES (?, ?, ?)'
+    let sql = 'INSERT INTO Utilisateurs(Prenom, Nom_Famille, Mot_De_Passe) VALUES (?, ?, ?)';
     let values = [
         req.body.firstName,
         req.body.lastName,
@@ -115,8 +116,8 @@ app.post('/createAccount', function (req, res){
         else {
             res.json(result);
         }
-    })
-})
+    });
+});
 
 
 /**
@@ -128,7 +129,7 @@ app.post('/delete', function (req, res){
     let idUser = -1;
     getIdUser(req.body.firstName, req.body.lastName, function (error, result){
         if(error){
-            console.error(error)
+            console.error(error);
             res.status(500).json(error);
         }
         else {
@@ -138,16 +139,16 @@ app.post('/delete', function (req, res){
             ];
             executeQuery(sql1, values, function (error, result) {
                 if (error) {
-                    console.error(error)
+                    console.error(error);
                     res.status(500).json(error);
                 } else {
                     executeQuery(sql2, values, function (error, result) {
                         if (error) {
-                            console.error(error)
+                            console.error(error);
                             res.status(500).json(error);
                         } else {
                             if (result.affectedRows === 0) {
-                                console.error("no data found // wrong ID")
+                                console.error("no data found // wrong ID");
                                 res.status(500).send('ERROR');
                             } else {
                                 res.send('DELETED');
@@ -157,8 +158,35 @@ app.post('/delete', function (req, res){
                 }
             });
         }
-    })
-})
+    });
+});
+
+app.post('/prescription', function (req, res){
+    let sql = 'INSERT INTO Ordonnance(ID_UTILISATEUR, CODE_CIS, QUANTITÉ) VALUES (?, ?, ?)';
+    let idUser = -1;
+    getIdUser(req.body.firstName, req.body.lastName, function (error, result){
+        if(error){
+            console.error(error);
+            res.status(500).json(error);
+        }
+        else {
+            idUser = result[0].Id_Utilisateur;
+            let values = [
+                idUser,
+                req.body.idMedoc,
+                req.body.quantityMedoc//TODO check >0
+            ];
+            executeQuery(sql, values, function(error, result){
+                if(error){
+                    res.status(500).json(error);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    });
+});
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

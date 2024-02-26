@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
+import SelectionDrugs from "../components/SelectionDrugs";
 
-const SERVER_ADDRESS = 'http://192.168.0.3:3000'; //TODO modifier
+const SERVER_ADDRESS = 'http://localhost:3000'; //TODO modifier
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
@@ -12,11 +13,15 @@ const Screen2 = () => {
     };
     const [userConnected, setUserConnected] = useState(false);//TODO connection automatique
     const [creatingUser, setCreatingUser] = useState(false);
+
     const [titleText, setTitleText] = useState("Compte utilisateur");
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [passwordUser, setPasswordUser] = useState('');
+
     const [showForm, setShowForm] = useState(false);
+    const [showDrugsModif, setDrugsModifVisibility] = useState(false);
 
     return (
         <View style={styles.screen}>
@@ -27,9 +32,10 @@ const Screen2 = () => {
                         <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                             Modifier mes informations
                         </Button>
-                        <Button icon="pill" mode="contained" onPress={changePills} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        <Button icon="pill" mode="contained" onPress={setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                             Mes médicaments
                         </Button>
+                        <SelectionDrugs isVisible={showDrugsModif} setVisibility={setDrugsModifVisibility} onOK={changeDrugs}></SelectionDrugs>
                     </View>}
 
                 {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
@@ -58,7 +64,7 @@ const Screen2 = () => {
                             onChangeText={text => setPasswordUser(text)}
                             secureTextEntry={true}
                         />
-                        <Button icon="chevron-right-circle-outline" mode="contained" onPress={creatingUser ? submitCreateUserForm : submitLoginForm} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                             Valider
                         </Button>
                         <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
@@ -88,7 +94,8 @@ const Screen2 = () => {
         //TODO popup
     }
 
-    function changePills() {
+    function changeDrugs() {
+        //SelectionDrugs.setVisibility(true);
         //TODO
     }
 

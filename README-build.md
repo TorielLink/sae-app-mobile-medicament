@@ -5,15 +5,12 @@ Installation de l'outil EAS
 npm install -g eas-cli
 ```
 
-Lancement local :
+Build local :
 ```shell
-eas build --platform android --local
+ANDROID_HOME=$HOME/Android/Sdk eas build --profile preview --platform android --local
 ```
 
-Lancement distant :
+Build distant :
 ```shell
 eas build --profile preview --platform android
 ```
-
-### Notes
-26/02/2024 - Erreur de lancement : Invariant Violation: requireNativeComponent: "RNSScreen" was not found in the UIManager.

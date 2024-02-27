@@ -73,8 +73,8 @@ export default function DataMatrixScanner() {
 
 const styles = StyleSheet.create({
     container: {
-        width: '200px',
-        height: '400px',
+        width: 200,
+        height: 200,
     },
     camera: {
         width: '100%',

@@ -24,69 +24,72 @@ const Screen2 = () => {
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
 
     return (
-        <View style={styles.screen}>
-            <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
-            <View style={{ flexDirection: 'column' }}>
-                {userConnected &&
-                    <View>
-                        <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                            Modifier mes informations
-                        </Button>
-                        <Button icon="pill" mode="contained" onPress={setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                            Mes médicaments
-                        </Button>
-                        <SelectionDrugs isVisible={showDrugsModif} setVisibility={setDrugsModifVisibility} onOK={changeDrugs}></SelectionDrugs>
-                    </View>}
+        <View>
+            <View style={styles.screen}>
+                <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
+                <View style={{ flexDirection: 'column' }}>
+                    {userConnected &&
+                        <View>
+                            <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                Modifier mes informations
+                            </Button>
+                            <Button icon="pill" mode="contained" onPress={() => setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                Mes médicaments
+                            </Button>
+                        </View>}
 
-                {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                    Me connecter
-                </Button>}
+                    {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        Me connecter
+                    </Button>}
 
-                {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained" onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                    Créer un compte
-                </Button>}
+                    {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained" onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        Créer un compte
+                    </Button>}
 
-                {showForm &&
-                    <View>
-                        <TextInput
-                            label="Prénom"
-                            value={firstName}
-                            onChangeText={text => setFirstName(text)}
-                        />
-                        <TextInput
-                            label="Nom de famille"
-                            value={lastName}
-                            onChangeText={text => setLastName(text)}
-                        />
-                        <TextInput
-                            label="Mot de passe"
-                            value={passwordUser}
-                            onChangeText={text => setPasswordUser(text)}
-                            secureTextEntry={true}
-                        />
-                        <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                            Valider
-                        </Button>
-                        <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                            Annuler
-                        </Button>
-                    </View>}
+                    {showForm &&
+                        <View>
+                            <TextInput
+                                label="Prénom"
+                                value={firstName}
+                                onChangeText={text => setFirstName(text)}
+                            />
+                            <TextInput
+                                label="Nom de famille"
+                                value={lastName}
+                                onChangeText={text => setLastName(text)}
+                            />
+                            <TextInput
+                                label="Mot de passe"
+                                value={passwordUser}
+                                onChangeText={text => setPasswordUser(text)}
+                                secureTextEntry={true}
+                            />
+                            <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                Valider
+                            </Button>
+                            <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                                Annuler
+                            </Button>
+                        </View>}
 
-                <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                    Nous contacter
-                </Button>
+                    <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                        Nous contacter
+                    </Button>
 
-                {userConnected &&
-                    <View>
-                        <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                            Me déconnecter
-                        </Button>
-                        <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                            Supprimer mon compte
-                        </Button>
-                    </View>}
+                    {userConnected &&
+                        <View>
+                            <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                                Me déconnecter
+                            </Button>
+                            <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                                Supprimer mon compte
+                            </Button>
+                        </View>}
 
+                </View>
             </View>
+            {userConnected && showDrugsModif &&
+                <SelectionDrugs isVisible={() => showDrugsModif} setVisibility={() => setDrugsModifVisibility} onOK={() => changeDrugs} />}
         </View>
     );
 
@@ -95,7 +98,7 @@ const Screen2 = () => {
     }
 
     function changeDrugs() {
-        //SelectionDrugs.setVisibility(true);
+        showAlert("drugs changed (almost) successfully");
         //TODO
     }
 

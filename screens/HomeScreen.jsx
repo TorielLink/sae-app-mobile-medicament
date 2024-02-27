@@ -3,13 +3,12 @@ import {View, StyleSheet, Text} from 'react-native';
 import SearchbarCIP from '../components/SearchbarCIP';
 import DataMatrixScanner from "../components/DataMatrixScanner";
 import TestBD from '../components/testBD';
-import {log} from "expo/build/devtools/logger";
 
 export default function Home() {
     return (
         <View style={stylesHome.screen}>
             <SearchbarCIP/>
-            <DataMatrixScanner/>
+            {/*<DataMatrixScanner/>TODO : ca lance des warnings dans le navigateur*/}
             <TestBD/>
         </View>
     );

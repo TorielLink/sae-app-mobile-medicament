@@ -89,7 +89,10 @@ const Screen2 = () => {
                 </View>
             </View>
             {userConnected && showDrugsModif &&
-                <SelectionDrugs isVisible={() => showDrugsModif} setVisibility={() => setDrugsModifVisibility} onOK={() => changeDrugs} />}
+                <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
+                                onOK={() => changeDrugs}
+                />
+            }
         </View>
     );
 
@@ -100,6 +103,7 @@ const Screen2 = () => {
     function changeDrugs() {
         showAlert("drugs changed (almost) successfully");
         //TODO
+        setDrugsModifVisibility(false);
     }
 
     function disconnectProfile() {

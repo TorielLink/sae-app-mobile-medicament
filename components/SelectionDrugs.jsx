@@ -2,21 +2,25 @@ import * as React from 'react';
 import {Button, Modal, Text} from 'react-native-paper';
 import {StyleSheet, View} from "react-native";
 
-export default function SelectionDrugs({isVisible, setVisibility, onOK}) {
+export default function SelectionDrugs({hide, onOK}) {
     return (
         <Modal
-            visible={isVisible}
+            visible={true}
             contentContainerStyle={styles.modal}
-            onDismiss={() => {setVisibility(false)}}>
+            onDismiss={() => {
+                hide();
+            }}>
             <View style={styles.modalContent}>
                 <Text>Modification de mes médicaments</Text>
                 <Text>plein de choses super ici</Text>{/*TODO*/}
                 <Button
-                    onPress={onOK}>
+                    onPress={onOK()}>
                     <Text>Valider</Text>
                 </Button>
                 <Button
-                    onPress={() => setVisibility(false)}>
+                    onPress={() => {
+                        hide();
+                    }}>
                     <Text>Annuler</Text>
                 </Button>
             </View>

@@ -6,7 +6,7 @@ export default function SelectionDrugs({hide, onOK}) {
     return (
         <Modal
             visible={true}
-            contentContainerStyle={styles.modal}
+            contentContainerStyle={styles.modalContainerStyle}
             onDismiss={() => {
                 hide();
             }}>
@@ -29,13 +29,14 @@ export default function SelectionDrugs({hide, onOK}) {
 };
 
 const styles = StyleSheet.create({
-    modal: {
+    modalContainerStyle: {
+        alignItems: 'center',
         backgroundColor: 'grey',
         padding: 20,
-        borderRadius: 10,
+        borderRadius: 10
     },
     modalContent: {
-        position: 'absolute',
+        maxWidth: 400,
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,

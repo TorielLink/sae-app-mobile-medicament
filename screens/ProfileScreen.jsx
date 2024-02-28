@@ -88,6 +88,9 @@ const Screen2 = () => {
 
                 </View>
             </View>
+            <Button icon="rocket-launch-outline" onPress={() => {setUserConnected(true); setDrugsModifVisibility(true);}}>
+                HYPER VITESSE
+            </Button>{/*TODO retirer ca une fois le front de SELECT-DRUGS fini*/}
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
                                 onOK={() => changeDrugs}
@@ -264,6 +267,7 @@ const Screen2 = () => {
 const styles = StyleSheet.create({
     screen: {
         alignItems: 'center',
+        height : "93%"//TODO trouver mieux pour que le modal des drugs prenne toute la page
     },
     title: {
         fontSize: 30,

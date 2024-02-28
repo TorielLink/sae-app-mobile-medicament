@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import SearchbarCIP from '../components/SearchbarCIP';
 import DataMatrixScanner from "../components/DataMatrixScanner";
-import TestBD from '../components/testBD';
+import TestBD from '../components/TestBD';
 
 export default function Home() {
     return (

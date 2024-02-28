@@ -48,7 +48,7 @@ export default function DataMatrixScanner() {
         else if (permission.granted && !isScannerVisible) {
             return (
                 <View style={styles.container}>
-                    <Button icon="camera" mode="contained" onPress={toggleScannerVisibility}/>
+                    <Button icon="camera" mode="contained" onPress={toggleScannerVisibility} />
                 </View>
             );
         }

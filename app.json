@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sae-app-mobile",
+    "name": "Data Dicament",
     "slug": "sae-app-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,14 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.remilem.saeAppMobile"
+      "bundleIdentifier": "com.remiLem.dataDicament"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.remilem.saeAppMobile"
+      "package": "com.remiLem.dataDicament"
     },
     "web": {
       "favicon": "./assets/favicon.png"

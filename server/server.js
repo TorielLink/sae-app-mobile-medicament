@@ -17,6 +17,15 @@ const connection = mysql.createConnection({
     database : process.env.DB_NAME
 });
 
+// verify connection
+connection.connect(err => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+        return;
+    }
+    console.log('Connected to MySQL database');
+});
+
 app.use(express.json());
 app.use(
     express.urlencoded({

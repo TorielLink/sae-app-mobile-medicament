@@ -100,7 +100,7 @@ const Screen2 = () => {
     );
 
     function changeProfileInfos() {
-        Alert.prompt(
+        Alert.prompt(//TODO rendre cross platform !!
             'Modifier mes informations',
             'Entrez vos nouvelles informations :',
             [

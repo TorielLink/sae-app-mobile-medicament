@@ -9,7 +9,7 @@ const MIN_LENGTH_NAME_USER = 1;
 
 const Screen2 = () => {
     const contactUs = () => {
-        Linking.openURL('mailto:service.technique@AppMobile.com');//TODO
+        Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
     };
     const [userConnected, setUserConnected] = useState(false);//TODO connection automatique
     const [creatingUser, setCreatingUser] = useState(false);
@@ -100,8 +100,29 @@ const Screen2 = () => {
     );
 
     function changeProfileInfos() {
-        //TODO popup
+        Alert.prompt(
+            'Modifier mes informations',
+            'Entrez vos nouvelles informations :',
+            [
+                {
+                    text: 'Annuler',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Valider',
+                    onPress: (newInfo) => updateProfile(newInfo),
+                },
+            ],
+            'plain-text'
+        );
     }
+
+    function updateProfile(newInfo) {
+        // Traitez les nouvelles infos
+        //TODO
+        showAlert(`Informations mises à jour : ${newInfo}`);
+    }
+
 
     function changeDrugs() {
         showAlert("drugs changed (almost) successfully");

@@ -1,83 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Button } from "react-native-paper";
-import { CameraView, useCameraPermissions } from 'expo-camera/next';
-import { Platform } from 'react-native';
+import { CameraView } from 'expo-camera/next';
+import {Camera} from 'expo-camera'
+import React, { useState, useEffect} from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
 
 export default function DataMatrixScanner() {
-    const [permission, requestPermission] = useCameraPermissions();
-    const [scannedData, setScannedData] = useState(null);
-    const [facing, setFacing] = useState('back');
-    const [isScannerVisible, setScannerVisible] = useState(false);
+    const[hasCameraPermission, setHasCameraPermission] = useState(null)
+    const[scanned, setScanned] = useState(null)
+    const[textScanned, setTextScanned] = useState('Aucun scan effectué')
 
     useEffect(() => {
-        if (permission && permission.granted) {
-            setScannerVisible(false);
-            toggleCameraFacing();
-        }
-    }, [permission]);
+        askForCameraPermission();
+    }, [])
 
-    const handleBarcodeScanned = ({ data }) => {
-        setScannedData(data);
-    };
-
-    const toggleScannerVisibility = () => {
-        setScannerVisible(!isScannerVisible);
-    };
-
-    const toggleCameraFacing = () => {
-        const isPC = Platform.OS === 'web';
-
-        // If the device is a PC, set to back camera, else set to front camera
-        setFacing(current => (isPC ? 'back' : current === 'back' ? 'front' : 'back'));
+    const askForCameraPermission = () => {
+        (async () => {
+            const cameraStatus = await Camera.requestCameraPermissionsAsync();
+            setHasCameraPermission(cameraStatus.status === 'granted');
+        })();
     }
 
-    const renderScanner = () => {
-        if (!permission || !permission.granted) {
-            // Camera permission not granted
-            return (
-                <View style={styles.container}>
-                    <Text>Camera permission not granted!</Text>
-                    <TouchableOpacity onPress={requestPermission}>
-                        <Text>Request Permission</Text>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
+    const handleBarCodeScanned = ({type,data}) => {
+        setScanned(true)
+        setTextScanned(data)
+    }
 
-        else if (permission.granted && !isScannerVisible) {
-            return (
-                <View style={styles.container}>
-                    <Button icon="camera" mode="contained" onPress={toggleScannerVisibility} />
-                </View>
-            );
-        }
+    if(hasCameraPermission === null){
+        return(
+            <View>
+                <Text>En attente de permissions pour la caméra</Text>
+            </View>
+        )
+    }
 
-        return (
-            <CameraView
-                style={styles.camera}
-                facing={facing}
-                onBarcodeScanned={handleBarcodeScanned}
-                barCodeScannerSettings={{
-                    barCodeTypes: ['datamatrix'],
-                }}
-            />
-        );
-    };
+    if(hasCameraPermission === false){
+        return(
+            <View>
+                <Text>Caméra refusée</Text>
+                <Button onPress={askForCameraPermission} title={"Autoriser la caméra"}/>
+            </View>)
+    }
 
-    return <View style={styles.container}>
-        {renderScanner}
-        <Text>{scannedData}</Text>
-    </View>;
+    return (
+            <View>
+                <CameraView barCodeScannerSettings={{barCodeTypes: ["datamatrix"],}}
+                            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} style={styles.camera}>
+                </CameraView>
+                <Text>{textScanned}</Text>
+                {scanned && <Button title = "Scanner une nouvelle fois" onPress={() => setScanned(false)}/>}
+            </View>
+    )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: 200,
-        height: 200,
-    },
     camera: {
-        width: '100%',
-        height: '100%',
-    },
-});
+        height: 100,
+        width: 100
+    }
+})

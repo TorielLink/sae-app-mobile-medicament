@@ -21,7 +21,6 @@ const theme = {
 
 export default function App() {
     return (
-        <StrictMode>{/*TODO : enlever quand on passe en prod*/}
             <PaperProvider theme={theme}>
                 <NavigationContainer>
                     <Tab.Navigator initialRouteName="Home">
@@ -31,7 +30,6 @@ export default function App() {
                     </Tab.Navigator>
                 </NavigationContainer>
             </PaperProvider>
-        </StrictMode>
     );
 }
 

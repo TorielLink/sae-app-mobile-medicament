@@ -32,7 +32,6 @@ const stylesHome = StyleSheet.create({
         flexDirection: 'column',
     },
     calendar: {
-        flex: 1,
         borderWidth: 1,
         borderColor: 'gray',
         borderRadius: 5,

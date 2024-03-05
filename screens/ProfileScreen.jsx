@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 
-const SERVER_ADDRESS = 'http://localhost:3000'; //TODO modifier
+const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments'; //TODO modifier si besoin
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 

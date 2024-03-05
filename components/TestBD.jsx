@@ -10,7 +10,7 @@ export default function testBD() {
         const fetchData = async () => {
             setLoadingState(true);
             try {
-                const response = await fetch('http://localhost:3000/medoc');//TODO changer ici l'adresse
+                const response = await fetch('https://remi-lem.alwaysdata.net/saeGestionMedicaments/medoc');//TODO changer ici pour passer en local
                 const dataServ = await response.json();
                 setData("--TEST-BD-- Votre médicament est disponible : " + dataServ[0].Denomination);
             } catch (error) {

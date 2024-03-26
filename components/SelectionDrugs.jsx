@@ -1,17 +1,28 @@
 import * as React from 'react';
 import {Button, DataTable, Modal, Text} from 'react-native-paper';
-import {StyleSheet, View} from "react-native";
+import {Alert, Platform, StyleSheet, View} from "react-native";
+import {useEffect} from "react";
 
-export default function SelectionDrugs({hide, onOK}) {
+const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments'; //TODO modifier si besoin
+
+const noDataOrdonances = [
+    {
+        key: 0,
+        name: 'Aucun médicament.',
+        quantity: 0,
+    },
+];
+
+export default function SelectionDrugs({hide, onOK, getIdUser}) {
     const [page, setPage] = React.useState(0);
     const [numberOfItemsPerPageList] = React.useState([2, 3, 4]);
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[0]
     );
 
-    const [items] = React.useState([
+    const [items, setItems] = React.useState([
         {
-            key: 1,
+            key: 0,
             name: 'Chargement...',
             quantity: 0,
         },
@@ -23,6 +34,10 @@ export default function SelectionDrugs({hide, onOK}) {
     React.useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
+
+    useEffect(() => {
+        fetchUserMedoc();
+    }, []);
 
     return (
         <Modal
@@ -71,6 +86,52 @@ export default function SelectionDrugs({hide, onOK}) {
             </View>
         </Modal>
     );
+
+    function updateItems(data) {
+        if (data.length === 0) {
+            setItems(noDataOrdonances);
+        } else {
+            setItems(data.map((item) => {
+                return {
+                    key: item.Code_CIS,
+                    name: item.Denomination,
+                    quantity: item.Quantité,
+                };
+            }));
+        }
+    }
+
+    function fetchUserMedoc() {
+        console.log(getIdUser());
+        fetch(SERVER_ADDRESS + '/getOrdonances', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idUser: getIdUser(),
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                showAlert('Erreur du serveur')
+            }
+            return response.json();
+        }).then(data => {
+            updateItems(data);
+        }).catch(error => {
+                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+            });
+    }
+
+    function showAlert(message){
+        if(Platform.OS === 'web'){
+            alert(message)
+        }
+        else {
+            Alert.alert(message);
+        }
+    }
+
 };
 
 const styles = StyleSheet.create({

@@ -90,11 +90,29 @@ app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
 });
 
 /**
+ * Get user's drugs on the Ordonnance table
+ */
+app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
+    let sql = 'SELECT O.Code_CIS, M.Denomination, O.Quantité FROM Ordonnance O INNER JOIN Medicaments M ON O.Code_CIS = M.Code_CIS WHERE Id_Utilisateur = ?';
+    let values = [
+        req.body.idUser
+    ];
+    executeQuery(sql, values, function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
+    });
+});
+
+/**
  * Login
  */
 app.post(`${HOME_REP_SERVER}/login`, function (req, res){
     console.log('User "' + req.body.firstName + ' ' + req.body.lastName + '" is trying to login');
-    let sql = 'SELECT Utilisateurs.Id_Utilisateur, Utilisateurs.Prenom, Utilisateurs.Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
+    let sql = 'SELECT Id_Utilisateur, Id_Utilisateur, Prenom, Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
     let values = [
         req.body.firstName,
         req.body.lastName,

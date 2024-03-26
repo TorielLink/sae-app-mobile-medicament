@@ -16,6 +16,7 @@ const Screen2 = () => {
 
     const [titleText, setTitleText] = useState("Compte utilisateur");
 
+    const [idUser, setIdUser] = useState();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [passwordUser, setPasswordUser] = useState('');
@@ -88,12 +89,10 @@ const Screen2 = () => {
 
                 </View>
             </View>
-            <Button icon="rocket-launch-outline" onPress={() => {setUserConnected(true); setDrugsModifVisibility(true);}}>
-                HYPER VITESSE
-            </Button>{/*TODO retirer ca une fois le front de SELECT-DRUGS fini*/}
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
                                 onOK={() => changeDrugs}
+                                getIdUser={() => {return idUser}}
                 />
             }
         </View>
@@ -131,6 +130,7 @@ const Screen2 = () => {
     }
 
     function disconnectProfile() {
+        setIdUser(null);
         setFirstName('');
         setLastName('');
         setPasswordUser('');
@@ -176,6 +176,7 @@ const Screen2 = () => {
             }
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
+                setIdUser(data[0].Id_Utilisateur);
                 setUserConnected(true);
             }
             setShowForm(false);

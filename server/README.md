@@ -10,9 +10,9 @@ node server.js
 
 Pour tester, voici un MODÈLE :
 ```shell
-curl -X POST https://remi-lem.alwaysdata.net/saeGestionMedicaments/<item> -H 'Content-Type: application/json' -d '{firstName: "<blabla>", lastName: "<tructruc>", ...}'
+curl -X POST https://remi-lem.alwaysdata.net/saeGestionMedicaments/<item> -H 'Content-Type: application/json' -d '{"firstName":"<blabla>", "lastName":"<tructruc>", ...}'
 ```
 Par exemple :
 ```shell
-curl -X POST https://remi-lem.alwaysdata.net/saeGestionMedicaments/prescription -H 'Content-Type: application/json' -d '{"firstName": "Rémi", "lastName": "L", "idMedoc": "60009573", "quantityMedoc": '1'}'
+curl -X POST https://remi-lem.alwaysdata.net/saeGestionMedicaments/prescription -H 'Content-Type: application/json' -d '{"firstName":"Rémi", "lastName":"L", "idMedoc":"60009573", "quantityMedoc":"1"}'
 ```

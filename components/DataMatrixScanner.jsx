@@ -4,6 +4,7 @@ import React, { useState, useEffect} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 
 export default function DataMatrixScanner() {
+    {/*TODO : le composant lance des warnings*/}
     const[hasCameraPermission, setHasCameraPermission] = useState(null)
     const[scanned, setScanned] = useState(null)
     const[textScanned, setTextScanned] = useState('Aucun scan effectué')

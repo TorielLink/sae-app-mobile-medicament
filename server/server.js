@@ -108,6 +108,25 @@ app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
 });
 
 /**
+ * Remove drug from user's Ordonance table
+ */
+app.post(`${HOME_REP_SERVER}/removeDrug`, function (req, res) {
+    let sql = 'DELETE FROM Ordonnance WHERE Id_Utilisateur = ? AND Code_CIS = ?';
+    let values = [
+        req.body.idUser,
+        req.body.CIS
+    ];
+    executeQuery(sql, values, function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.send('OK');
+        }
+    });
+});
+
+/**
  * Login
  */
 app.post(`${HOME_REP_SERVER}/login`, function (req, res){
@@ -194,6 +213,11 @@ app.post(`${HOME_REP_SERVER}/delete`, function (req, res){
 app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
     let sql = 'INSERT INTO Ordonnance(ID_UTILISATEUR, CODE_CIS, QUANTITÉ) VALUES (?, ?, ?)';
     let idUser = -1;
+    let quantity = req.body.quantityMedoc;
+    if(quantity < 0){
+        res.send("Error : negative quantity");
+        return;
+    }
     getIdUser(req.body.firstName, req.body.lastName, function (error, result){
         if(error){
             console.error(error);
@@ -204,7 +228,7 @@ app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
             let values = [
                 idUser,
                 req.body.idMedoc,
-                req.body.quantityMedoc//TODO check >0
+                quantity
             ];
             executeQuery(sql, values, function(error, result){
                 if(error){

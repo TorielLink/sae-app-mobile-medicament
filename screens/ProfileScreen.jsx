@@ -91,8 +91,8 @@ const Screen2 = () => {
             </View>
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
-                                onOK={() => changeDrugs}
                                 getIdUser={() => {return idUser}}
+                                SERVER_ADDRESS={SERVER_ADDRESS}
                 />
             }
         </View>
@@ -120,13 +120,6 @@ const Screen2 = () => {
         // Traitez les nouvelles infos
         //TODO
         showAlert(`Informations mises à jour : ${newInfo}`);
-    }
-
-
-    function changeDrugs() {
-        showAlert("drugs changed (almost) successfully");
-        //TODO
-        setDrugsModifVisibility(false);
     }
 
     function disconnectProfile() {
@@ -169,7 +162,9 @@ const Screen2 = () => {
             if (!response.ok) {
                 showAlert('Erreur du serveur')
             }
-            return response.json();
+            else {
+                return response.json();
+            }
         }).then(data => {
             if(data.length === 0){
                 showAlert('Mauvais identifiants')
@@ -206,7 +201,9 @@ const Screen2 = () => {
             if (!response.ok) {
                 showAlert('Erreur du serveur')
             }
-            return response.json();
+            else {
+                return response.json();
+            }
         }).then(data => {
             showAlert('Compte crée avec succès')
             setTitleText("Compte utilisateur");
@@ -268,9 +265,10 @@ const Screen2 = () => {
         }).then(response => {
             if (!response.ok) {
                 showAlert('Erreur du serveur');
-                return;
             }
-            return response;
+            else {
+                return response;
+            }
         }).then(data => {
             if(data.text() === "ERROR"){
                 showAlert('Erreur de suppression');

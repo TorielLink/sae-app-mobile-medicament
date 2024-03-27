@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import SearchbarCIP from '../components/SearchbarCIP';
 import DataMatrixScanner from "../components/DataMatrixScanner";
-import TestBD from '../components/TestBD';
 import { Calendar } from 'react-native-calendars';
 
 export default function Home() {
@@ -14,8 +13,7 @@ export default function Home() {
                     style={stylesHome.calendar}
                 />
             </View>
-            <DataMatrixScanner />{/*TODO : ça lance des avertissements dans le navigateur*/}
-            <TestBD />
+            <DataMatrixScanner />
         </View>
     );
 }

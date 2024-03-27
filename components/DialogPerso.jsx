@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import React from "react";
 import Dialog from "react-native-dialog";
 
 export default function DialogPerso(title, desc, hasCancel, handleCancel, hasDelete, handleDelete, hasOK, handleOK) {

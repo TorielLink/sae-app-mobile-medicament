@@ -3,8 +3,6 @@ import {Button, DataTable, Modal, Text} from 'react-native-paper';
 import {Alert, Platform, StyleSheet, View} from "react-native";
 import {useEffect} from "react";
 
-const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments'; //TODO modifier si besoin
-
 const noDataOrdonances = [
     {
         key: 0,
@@ -13,7 +11,7 @@ const noDataOrdonances = [
     },
 ];
 
-export default function SelectionDrugs({hide, onOK, getIdUser}) {
+export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
     const [page, setPage] = React.useState(0);
     const [numberOfItemsPerPageList] = React.useState([2, 3, 4]);
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
@@ -51,13 +49,19 @@ export default function SelectionDrugs({hide, onOK, getIdUser}) {
                 <DataTable>
                     <DataTable.Header>
                         <DataTable.Title>Nom</DataTable.Title>
+                        <DataTable.Title numeric>Code CIS</DataTable.Title>
                         <DataTable.Title numeric>Quantité</DataTable.Title>
+                        <DataTable.Title>Suppression</DataTable.Title>
                     </DataTable.Header>
 
                     {items.slice(from, to).map((item) => (
                         <DataTable.Row key={item.key}>
                             <DataTable.Cell>{item.name}</DataTable.Cell>
+                            <DataTable.Cell>{item.key}</DataTable.Cell>
                             <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
+                            <DataTable.Cell>
+                                <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>
+                            </DataTable.Cell>
                         </DataTable.Row>
                     ))}
 
@@ -73,10 +77,6 @@ export default function SelectionDrugs({hide, onOK, getIdUser}) {
                         selectPageDropdownLabel={'Rows per page'}
                     />
                 </DataTable>
-                <Button
-                    onPress={onOK()}>
-                    <Text>Valider</Text>
-                </Button>
                 <Button
                     onPress={() => {
                         hide();
@@ -102,7 +102,6 @@ export default function SelectionDrugs({hide, onOK, getIdUser}) {
     }
 
     function fetchUserMedoc() {
-        console.log(getIdUser());
         fetch(SERVER_ADDRESS + '/getOrdonances', {
             method: 'POST',
             headers: {
@@ -115,12 +114,37 @@ export default function SelectionDrugs({hide, onOK, getIdUser}) {
             if (!response.ok) {
                 showAlert('Erreur du serveur')
             }
-            return response.json();
+            else {
+                return response.json();
+            }
         }).then(data => {
             updateItems(data);
         }).catch(error => {
                 showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
+    }
+
+    function removeDrug(CIS) {
+        fetch(SERVER_ADDRESS + '/removeDrug', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idUser: getIdUser(),
+                CIS: CIS,
+            }),
+        }).then(response => {
+            if (!response.ok || response === 'OK') {
+                showAlert('Erreur du serveur')
+            }
+            else {
+                showAlert('Médicament supprimé');
+                hide();
+            }
+        }).catch(error => {
+            showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+        });
     }
 
     function showAlert(message){

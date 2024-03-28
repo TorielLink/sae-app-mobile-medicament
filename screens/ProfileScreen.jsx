@@ -1,20 +1,34 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
-import {Button, TextInput} from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Linking, Alert, Platform, Picker } from 'react-native'; // Importez Picker depuis react-native
+import { Button, TextInput } from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
+import { useTranslation } from 'react-i18next';
 
-const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments'; //TODO modifier si besoin
+import lang_en from '../translations/en.json';
+import lang_fr from '../translations/fr.json';
+import lang_es from '../translations/es.json';
+import lang_de from '../translations/de.json';
+
+const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments';
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
-const Screen2 = () => {
-    const contactUs = () => {
-        Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
-    };
-    const [userConnected, setUserConnected] = useState(false);//TODO connection automatique
-    const [creatingUser, setCreatingUser] = useState(false);
+const ProfileScreen = () => {
+    const { t, i18n } = useTranslation();
 
-    const [titleText, setTitleText] = useState("Compte utilisateur");
+    const contactUs = () => {
+        Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application');
+    };
+    const [userConnected, setUserConnected] = useState(false);
+    const [creatingUser, setCreatingUser] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState(i18n.language); // État de la langue sélectionnée
+
+    useEffect(() => {
+        // Mettre à jour la langue de l'application lorsque la langue sélectionnée change
+        i18n.changeLanguage(selectedLanguage);
+    }, [selectedLanguage]);
+
+    const [titleText, setTitleText] = useState(t('profileScreen.userAccount'));
 
     const [idUser, setIdUser] = useState();
     const [firstName, setFirstName] = useState('');
@@ -24,74 +38,90 @@ const Screen2 = () => {
     const [showForm, setShowForm] = useState(false);
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
 
+    // Fonction pour changer la langue
+    const changeLanguage = (language) => {
+        setSelectedLanguage(language);
+    };
+
     return (
         <View>
             <View style={styles.screen}>
                 <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
+                {/* Ajouter le Picker pour choisir la langue */}
+                <Picker
+                    selectedValue={selectedLanguage}
+                    style={{ height: 50, width: 150 }}
+                    onValueChange={(itemValue, itemIndex) => changeLanguage(itemValue)}
+                >
+                    <Picker.Item label="English" value="en" />
+                    <Picker.Item label="Français" value="fr" />
+                    <Picker.Item label="Español" value="es" />
+                    <Picker.Item label="Deutsch" value="de" />
+                </Picker>
                 <View style={{ flexDirection: 'column' }}>
                     {userConnected &&
                         <View>
                             <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                Modifier mes informations
+                                {t('profileScreen.modifyInfos')}
                             </Button>
                             <Button icon="pill" mode="contained" onPress={() => setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                Mes médicaments
+                                {t('profileScreen.myDrugs')}
                             </Button>
                         </View>}
 
                     {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        Me connecter
+                        {t('profileScreen.signIn')}
                     </Button>}
 
                     {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained" onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        Créer un compte
+                        {t('profileScreen.createAccount')}
                     </Button>}
 
                     {showForm &&
                         <View>
                             <TextInput
-                                label="Prénom"
+                                label={t('profileScreen.firstName')}
                                 value={firstName}
                                 onChangeText={text => setFirstName(text)}
                             />
                             <TextInput
-                                label="Nom de famille"
+                                label={t('profileScreen.lastName')}
                                 value={lastName}
                                 onChangeText={text => setLastName(text)}
                             />
                             <TextInput
-                                label="Mot de passe"
+                                label={t('profileScreen.password')}
                                 value={passwordUser}
                                 onChangeText={text => setPasswordUser(text)}
                                 secureTextEntry={true}
                             />
-                            <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                Valider
+                            <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                {t('profileScreen.validate')}
                             </Button>
                             <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                Annuler
+                                {t('profileScreen.cancel')}
                             </Button>
                         </View>}
 
                     <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        Nous contacter
+                        {t('profileScreen.contactUs')}
                     </Button>
 
                     {userConnected &&
                         <View>
                             <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                Me déconnecter
+                                {t('profileScreen.signOut')}
                             </Button>
                             <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                Supprimer mon compte
+                                {t('profileScreen.deleteAccount')}
                             </Button>
                         </View>}
 
                 </View>
             </View>
             {userConnected && showDrugsModif &&
-                <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
-                                getIdUser={() => {return idUser}}
+                <SelectionDrugs hide={() => { setDrugsModifVisibility(false); }}
+                                getIdUser={() => { return idUser }}
                                 SERVER_ADDRESS={SERVER_ADDRESS}
                 />
             }
@@ -99,16 +129,16 @@ const Screen2 = () => {
     );
 
     function changeProfileInfos() {
-        Alert.prompt(//TODO rendre cross platform !!
-            'Modifier mes informations',
-            'Entrez vos nouvelles informations :',
+        Alert.prompt(
+            t('profileScreen.modifyInfosTitle'),
+            t('profileScreen.modifyInfosPrompt'),
             [
                 {
-                    text: 'Annuler',
+                    text: t('profileScreen.cancel'),
                     style: 'cancel',
                 },
                 {
-                    text: 'Valider',
+                    text: t('profileScreen.validate'),
                     onPress: (newInfo) => updateProfile(newInfo),
                 },
             ],
@@ -117,9 +147,7 @@ const Screen2 = () => {
     }
 
     function updateProfile(newInfo) {
-        // Traitez les nouvelles infos
-        //TODO
-        showAlert(`Informations mises à jour : ${newInfo}`);
+        showAlert(`${t('profileScreen.updatedInfo')} ${newInfo}`);
     }
 
     function disconnectProfile() {
@@ -128,24 +156,24 @@ const Screen2 = () => {
         setLastName('');
         setPasswordUser('');
         setUserConnected(false);
-        setTitleText("Compte utilisateur");
+        setTitleText(t('profileScreen.userAccount'));
     }
 
     function createProfile() {
-        setTitleText("Création de compte");
+        setTitleText(t('profileScreen.createAccountTitle'));
         setCreatingUser(true);
         setShowForm(true);
     }
 
     function connectProfile() {
-        setTitleText("Connexion");
+        setTitleText(t('profileScreen.signInTitle'));
         setCreatingUser(false);
         setShowForm(true);
     }
 
     function submitLoginForm() {
         if(!sizeFormInputOK()){
-            showAlert("Champs trop courts. Merci de vérifier vos informations");
+            showAlert(t('profileScreen.fieldsTooShort'));
             return;
         }
         fetch(SERVER_ADDRESS + '/login', {
@@ -160,31 +188,31 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur')
+                showAlert(t('profileScreen.serverError'));
             }
             else {
                 return response.json();
             }
         }).then(data => {
             if(data.length === 0){
-                showAlert('Mauvais identifiants')
+                showAlert(t('profileScreen.badCredentials'));
             }
             else {
-                setTitleText("Bienvenue " + firstName + ' ' + lastName);
+                setTitleText(t('profileScreen.welcome') + ' ' + firstName + ' ' + lastName);
                 setIdUser(data[0].Id_Utilisateur);
                 setUserConnected(true);
             }
             setShowForm(false);
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                showAlert(t('profileScreen.serverUnreachable') + SERVER_ADDRESS);
             });
         setPasswordUser('');
     }
 
     function submitCreateUserForm() {
         if(!sizeFormInputOK()){
-            showAlert("Champs trop courts. (MDP > 5 caractères)");
+            showAlert(t('profileScreen.fieldsTooShort2'));
             return;
         }
         fetch(SERVER_ADDRESS + '/createAccount', {
@@ -194,23 +222,26 @@ const Screen2 = () => {
             },
             body: JSON.stringify({
                 firstName: firstName,
+
+
+
                 lastName: lastName,
                 passwordUser: passwordUser,
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur')
+                showAlert(t('profileScreen.serverError'));
             }
             else {
                 return response.json();
             }
         }).then(data => {
-            showAlert('Compte crée avec succès')
-            setTitleText("Compte utilisateur");
+            showAlert(t('profileScreen.accountCreated'))
+            setTitleText(t('profileScreen.userAccount'));
             setShowForm(false);
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                showAlert(t('profileScreen.serverUnreachable') + SERVER_ADDRESS);
             });
         setPasswordUser('');
     }
@@ -220,7 +251,7 @@ const Screen2 = () => {
         setLastName('');
         setPasswordUser('');
         setShowForm(false)
-        setTitleText("Compte utilisateur");
+        setTitleText(t('profileScreen.userAccount'));
     }
 
     function showAlert(message){
@@ -237,17 +268,16 @@ const Screen2 = () => {
     }
 
     function deleteProfile() {
-        Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
-            //TODO generaliser l'alerte (ne marche pas pour le web)
+        Alert.alert(t('profileScreen.deleteAccountTitle'), t('profileScreen.deleteAccountPrompt'), [
             {
-                text: 'Annuler',
+                text: t('profileScreen.cancel'),
                 style: 'cancel',
             },
             {
                 cancelable: true,
             },
             {
-                text: 'OK', onPress: deleteProfileConfirmed
+                text: t('profileScreen.OK'), onPress: deleteProfileConfirmed
             }
         ]);
     }
@@ -264,22 +294,22 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur');
+                showAlert(t('profileScreen.serverError'));
             }
             else {
                 return response;
             }
         }).then(data => {
             if(data.text() === "ERROR"){
-                showAlert('Erreur de suppression');
+                showAlert(t('profileScreen.deletionError'));
             }
             else {
-                showAlert('Compte supprimé');
+                showAlert(t('profileScreen.accountDeleted'));
                 disconnectProfile();
             }
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+                showAlert(t('profileScreen.serverUnreachable') + SERVER_ADDRESS);
             });
     }
 };
@@ -287,7 +317,7 @@ const Screen2 = () => {
 const styles = StyleSheet.create({
     screen: {
         alignItems: 'center',
-        height : "93%"//TODO trouver mieux pour que le modal des drugs prenne toute la page
+        height: "93%"
     },
     title: {
         fontSize: 30,
@@ -299,4 +329,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Screen2;
+export default ProfileScreen;

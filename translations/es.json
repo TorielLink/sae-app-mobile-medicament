@@ -1,16 +1,30 @@
 {
-  "common": {
-    "welcomeMessage": "¡Bienvenido a mi aplicación!",
+  "profileScreen": {
+    "userAccount": "Cuenta de usuario",
+    "modifyInfos": "Modificar mis informaciones",
+    "modifyInfosTitle": "Modificar mis informaciones",
+    "modifyInfosPrompt": "Ingrese sus nuevas informaciones:",
+    "myDrugs": "Mis medicamentos",
+    "signIn": "Iniciar sesión",
+    "createAccount": "Crear una cuenta",
+    "createAccountTitle": "Crear una cuenta",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "password": "Contraseña",
+    "validate": "Validar",
     "cancel": "Cancelar",
-    "save": "Guardar"
+    "contactUs": "Contacta con nosotros",
+    "signOut": "Cerrar sesión",
+    "deleteAccount": "Eliminar mi cuenta",
+    "deleteAccountTitle": "Eliminar cuenta",
+    "deleteAccountPrompt": "¿Estás seguro de que quieres eliminar tu cuenta?",
+    "OK": "OK",
+    "welcome": "Bienvenido"
   },
   "settingsScreen": {
-    "permissionDeniedTitle": "Permiso Denegado",
-    "permissionDeniedNotification": "Has denegado el acceso a las notificaciones.",
-    "permissionDeniedLocation": "Has denegado el acceso a la ubicación.",
-    "permissionDeniedCamera": "Has denegado el acceso a la cámara.",
-    "notification": "Notificaciones",
-    "allowLocation": "Permitir Ubicación",
-    "allowCamera": "Permitir Cámara"
+    "permissionDeniedTitle": "Permiso denegado",
+    "permissionDeniedNotification": "Denegaste el acceso a las notificaciones.",
+    "permissionDeniedLocation": "Denegaste el acceso a la ubicación.",
+    "permissionDeniedCamera": "Denegaste el acceso a la cámara."
   }
 }

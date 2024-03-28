@@ -1,16 +1,30 @@
 {
-  "common": {
-    "welcomeMessage": "Willkommen in meiner App!",
+  "profileScreen": {
+    "userAccount": "Benutzerkonto",
+    "modifyInfos": "Meine Informationen ändern",
+    "modifyInfosTitle": "Meine Informationen ändern",
+    "modifyInfosPrompt": "Geben Sie Ihre neuen Informationen ein:",
+    "myDrugs": "Meine Medikamente",
+    "signIn": "Einloggen",
+    "createAccount": "Ein Konto erstellen",
+    "createAccountTitle": "Ein Konto erstellen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "password": "Passwort",
+    "validate": "Bestätigen",
     "cancel": "Abbrechen",
-    "save": "Speichern"
+    "contactUs": "Kontaktiere uns",
+    "signOut": "Ausloggen",
+    "deleteAccount": "Mein Konto löschen",
+    "deleteAccountTitle": "Konto löschen",
+    "deleteAccountPrompt": "Bist du sicher, dass du dein Konto löschen möchtest?",
+    "OK": "OK",
+    "welcome": "Willkommen"
   },
   "settingsScreen": {
     "permissionDeniedTitle": "Berechtigung verweigert",
     "permissionDeniedNotification": "Sie haben den Zugriff auf Benachrichtigungen verweigert.",
     "permissionDeniedLocation": "Sie haben den Zugriff auf den Standort verweigert.",
-    "permissionDeniedCamera": "Sie haben den Zugriff auf die Kamera verweigert.",
-    "notification": "Benachrichtigungen",
-    "allowLocation": "Standort erlauben",
-    "allowCamera": "Kamera erlauben"
+    "permissionDeniedCamera": "Sie haben den Zugriff auf die Kamera verweigert."
   }
 }

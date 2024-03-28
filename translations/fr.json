@@ -1,16 +1,30 @@
 {
-  "common": {
-    "welcomeMessage": "Bienvenue dans mon application !",
+  "profileScreen": {
+    "userAccount": "Compte utilisateur",
+    "modifyInfos": "Modifier mes informations",
+    "modifyInfosTitle": "Modifier mes informations",
+    "modifyInfosPrompt": "Entrez vos nouvelles informations :",
+    "myDrugs": "Mes médicaments",
+    "signIn": "Me connecter",
+    "createAccount": "Créer un compte",
+    "createAccountTitle": "Création de compte",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "password": "Mot de passe",
+    "validate": "Valider",
     "cancel": "Annuler",
-    "save": "Enregistrer"
+    "contactUs": "Nous contacter",
+    "signOut": "Me déconnecter",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteAccountTitle": "Suppression de compte",
+    "deleteAccountPrompt": "Êtes vous sur de vouloir supprimer votre compte ?",
+    "OK": "OK",
+    "welcome": "Bienvenue"
   },
   "settingsScreen": {
-    "permissionDeniedTitle": "Autorisation Refusée",
+    "permissionDeniedTitle": "Autorisation refusée",
     "permissionDeniedNotification": "Vous avez refusé l'accès aux notifications.",
     "permissionDeniedLocation": "Vous avez refusé l'accès à la localisation.",
-    "permissionDeniedCamera": "Vous avez refusé l'accès à la caméra.",
-    "notification": "Notifications",
-    "allowLocation": "Autoriser la localisation",
-    "allowCamera": "Autoriser la caméra"
+    "permissionDeniedCamera": "Vous avez refusé l'accès à la caméra."
   }
 }

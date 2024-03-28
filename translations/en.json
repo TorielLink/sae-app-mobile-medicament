@@ -1,16 +1,30 @@
 {
-  "common": {
-    "welcomeMessage": "Welcome to my app!",
+  "profileScreen": {
+    "userAccount": "User Account",
+    "modifyInfos": "Modify my informations",
+    "modifyInfosTitle": "Modify my informations",
+    "modifyInfosPrompt": "Enter your new informations:",
+    "myDrugs": "My drugs",
+    "signIn": "Sign in",
+    "createAccount": "Create an account",
+    "createAccountTitle": "Create an account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "password": "Password",
+    "validate": "Validate",
     "cancel": "Cancel",
-    "save": "Save"
+    "contactUs": "Contact us",
+    "signOut": "Sign out",
+    "deleteAccount": "Delete my account",
+    "deleteAccountTitle": "Delete account",
+    "deleteAccountPrompt": "Are you sure you want to delete your account?",
+    "OK": "OK",
+    "welcome": "Welcome"
   },
   "settingsScreen": {
-    "permissionDeniedTitle": "Permission Denied",
-    "permissionDeniedNotification": "You have denied access to notifications.",
-    "permissionDeniedLocation": "You have denied access to location.",
-    "permissionDeniedCamera": "You have denied access to the camera.",
-    "notification": "Notifications",
-    "allowLocation": "Allow Location",
-    "allowCamera": "Allow Camera"
+    "permissionDeniedTitle": "Permission denied",
+    "permissionDeniedNotification": "You denied access to notifications.",
+    "permissionDeniedLocation": "You denied access to location.",
+    "permissionDeniedCamera": "You denied access to camera."
   }
 }

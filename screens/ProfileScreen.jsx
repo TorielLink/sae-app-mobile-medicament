@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
+import {View, Text, StyleSheet, Linking} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "../components/AdaptativeAlert";
+import ModalAlert from '../components/ModalAlert';
 
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
@@ -70,24 +71,30 @@ export default function ProfileScreen() {
                                 onChangeText={text => setPasswordUser(text)}
                                 secureTextEntry={true}
                             />
-                            <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            <Button icon="chevron-right-circle-outline" mode="contained" onPress={
+                                (creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/
+                            } buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                                 Valider
                             </Button>
-                            <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                            <Button icon="close-circle-outline" mode="contained" onPress={cancelForm}
+                                    buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
                                 Annuler
                             </Button>
                         </View>}
 
-                    <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                    <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"}
+                            style={styles.buttonStyle}>
                         Nous contacter
                     </Button>
 
                     {userConnected &&
                         <View>
-                            <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                            <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"}
+                                    style={styles.buttonStyle}>
                                 Me déconnecter
                             </Button>
-                            <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
+                            <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"}
+                                    style={styles.buttonStyle}>
                                 Supprimer mon compte
                             </Button>
                         </View>}
@@ -95,15 +102,14 @@ export default function ProfileScreen() {
                 </View>
             </View>
             {userConnected && showDrugsModif &&
-                <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
-                                getIdUser={() => {return idUser}}
-                />
-            }
+                <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}} getIdUser={
+                    () => {return idUser}}/>}
         </View>
     );
 
     function changeProfileInfos() {
-        Alert.prompt(//TODO rendre cross platform !!
+        //TODO: NE FONCTIONNE PAS
+        /*Alert.prompt(
             'Modifier mes informations',
             'Entrez vos nouvelles informations :',
             [
@@ -117,13 +123,43 @@ export default function ProfileScreen() {
                 },
             ],
             'plain-text'
-        );
+        );*/
+        ModalAlert({
+            title: 'Modifier mes informations',
+            message: 'Entrez vos nouvelles informations :',
+            buttons: [
+                {
+                    text: 'Annuler',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Valider',
+                    onPress: (newInfo) => updateProfile(newInfo),
+                },
+            ],
+        });
     }
 
     function updateProfile(newInfo) {
-        // Traitez les nouvelles infos
-        //TODO
-        AdaptativeAlert(`Informations mises à jour : ${newInfo}`);
+        fetch(SERVER_ADDRESS + '/updateProfile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                newInfo: newInfo,
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur du serveur');
+                } else {
+                    AdaptativeAlert(`Informations mises à jour : ${newInfo}`);
+                }
+            })
+            .catch(error => {
+                AdaptativeAlert(`Erreur lors de la mise à jour du profil : ${error}`);
+            });
     }
 
     function disconnectProfile() {
@@ -232,7 +268,8 @@ export default function ProfileScreen() {
     }
 
     function deleteProfile() {
-        Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
+        //TODO: NE FONCTIONNE PAS
+        /*Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
             //TODO generaliser l'alerte (ne marche pas pour le web)
             {
                 text: 'Annuler',
@@ -244,7 +281,21 @@ export default function ProfileScreen() {
             {
                 text: 'OK', onPress: deleteProfileConfirmed
             }
-        ]);
+        ]);*/
+        ModalAlert({
+            title: 'Suppression de compte',
+            message: 'Êtes-vous sûr de vouloir supprimer votre compte ?',
+            buttons: [
+                {
+                    text: 'Annuler',
+                    style: 'cancel',
+                },
+                {
+                    text: 'OK',
+                    onPress: deleteProfileConfirmed,
+                },
+            ],
+        });
     }
 
     function deleteProfileConfirmed() {

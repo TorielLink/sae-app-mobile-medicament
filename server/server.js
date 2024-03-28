@@ -207,6 +207,53 @@ app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
     });
 });
 
+/*
+UPDATE INFORMATION
+*/
+app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
+    const { firstName, lastName, password } = req.body;
+    let idUser = -1;
+
+    let updateFields = [];
+    if (firstName) {
+        updateFields.push("`firstname` = '" + firstName + "'");
+    }
+    if (lastName) {
+        updateFields.push("`lastname` = '" + lastName + "'");
+    }
+    if (password) {
+        updateFields.push("`password` = '" + password + "'");
+    }
+
+    if (updateFields.length > 0) {
+        let updateFieldsString = updateFields.join(", ");
+        sql = "UPDATE UTILISATEUR SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
+        values = [token];
+        getIdUser(req.body.firstName, req.body.lastName, function (error, result){
+            if(error){
+                res.status(500).json(error);
+            }
+            else {
+                idUser = result[0].Id_Utilisateur;
+                let values = [
+                    idUser
+                ];
+                executeQuery(sql, values, function (error, result) {
+                    if (error) {
+                        console.error(error);
+                        res.status(500).json(error);
+                    } else {
+                        res.status(200).json('User information updated successfully');
+                    }
+                });
+            }
+        });
+        } else {
+            res.status(400).json('No fields to update');
+        }
+
+});
+
 
 /**
  * Delete profile

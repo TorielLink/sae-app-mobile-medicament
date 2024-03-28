@@ -78,16 +78,16 @@ export default function GestionCIS() {
     };
 
     function saveCIPToDataBase(CIP) { // CIP ou CIS ??
-        {/*TODO PAS DU TOUT FINI
+        {/*TODO PAS DU TOUT FINI*/
         fetch(SERVER_ADDRESS + '/addOrdonance', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                idUser: getIdUser(),
                 CIP: CIP,
-                newStatus: true
+                newStatus: true,
+                quantity: 1
             }),
         }).then(response => {
             if (!response.ok) {
@@ -98,7 +98,7 @@ export default function GestionCIS() {
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
-        */}
+        }
     }
 
     function saveInputLocally(input) {

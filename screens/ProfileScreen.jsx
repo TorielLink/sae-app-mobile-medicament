@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, Linking, Alert, Platform} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
+import {SERVER_ADDRESS} from "../constants/constants";
+import AdaptativeAlert from "../components/AdaptativeAlert";
 
-const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments'; //TODO modifier si besoin
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
-const Screen2 = () => {
+export default function ProfileScreen() {
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
     };
@@ -96,7 +97,6 @@ const Screen2 = () => {
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}}
                                 getIdUser={() => {return idUser}}
-                                SERVER_ADDRESS={SERVER_ADDRESS}
                 />
             }
         </View>
@@ -123,7 +123,7 @@ const Screen2 = () => {
     function updateProfile(newInfo) {
         // Traitez les nouvelles infos
         //TODO
-        showAlert(`Informations mises à jour : ${newInfo}`);
+        AdaptativeAlert(`Informations mises à jour : ${newInfo}`);
     }
 
     function disconnectProfile() {
@@ -149,7 +149,7 @@ const Screen2 = () => {
 
     function submitLoginForm() {
         if(!sizeFormInputOK()){
-            showAlert("Champs trop courts. Merci de vérifier vos informations");
+            AdaptativeAlert("Champs trop courts. Merci de vérifier vos informations");
             return;
         }
         fetch(SERVER_ADDRESS + '/login', {
@@ -164,14 +164,14 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur')
+                AdaptativeAlert('Erreur du serveur')
             }
             else {
                 return response.json();
             }
         }).then(data => {
             if(data.length === 0){
-                showAlert('Mauvais identifiants')
+                AdaptativeAlert('Mauvais identifiants')
             }
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
@@ -181,14 +181,14 @@ const Screen2 = () => {
             setShowForm(false);
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
         setPasswordUser('');
     }
 
     function submitCreateUserForm() {
         if(!sizeFormInputOK()){
-            showAlert("Champs trop courts. (MDP > 5 caractères)");
+            AdaptativeAlert("Champs trop courts. (MDP > 5 caractères)");
             return;
         }
         fetch(SERVER_ADDRESS + '/createAccount', {
@@ -203,18 +203,18 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur')
+                AdaptativeAlert('Erreur du serveur')
             }
             else {
                 return response.json();
             }
         }).then(data => {
-            showAlert('Compte crée avec succès')
+            AdaptativeAlert('Compte crée avec succès')
             setTitleText("Compte utilisateur");
             setShowForm(false);
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
         setPasswordUser('');
     }
@@ -225,15 +225,6 @@ const Screen2 = () => {
         setPasswordUser('');
         setShowForm(false)
         setTitleText("Compte utilisateur");
-    }
-
-    function showAlert(message){
-        if(Platform.OS === 'web'){
-            alert(message)
-        }
-        else {
-            Alert.alert(message);
-        }
     }
 
     function sizeFormInputOK() {
@@ -268,22 +259,22 @@ const Screen2 = () => {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur');
+                AdaptativeAlert('Erreur du serveur');
             }
             else {
                 return response;
             }
         }).then(data => {
             if(data.text() === "ERROR"){
-                showAlert('Erreur de suppression');
+                AdaptativeAlert('Erreur de suppression');
             }
             else {
-                showAlert('Compte supprimé');
+                AdaptativeAlert('Compte supprimé');
                 disconnectProfile();
             }
         })
             .catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
             });
     }
 };
@@ -291,7 +282,6 @@ const Screen2 = () => {
 const styles = StyleSheet.create({
     screen: {
         alignItems: 'center',
-        height : "93%"//TODO trouver mieux pour que le modal des drugs prenne toute la page
     },
     title: {
         fontSize: 30,
@@ -302,5 +292,3 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     }
 });
-
-export default Screen2;

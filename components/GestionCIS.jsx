@@ -3,8 +3,9 @@ import { Button, Modal, Portal, Searchbar, List } from 'react-native-paper';
 import {StyleSheet, View} from "react-native";
 import DataMatrixScanner from "./DataMatrixScanner";
 import AdaptativeAlert from "./AdaptativeAlert";
+import {SERVER_ADDRESS} from "../constants/constants";
 
-export default function GestionCIS({SERVER_ADDRESS}) {
+export default function GestionCIS() {
     const [searchQuery, setSearchQuery] = useState('');
     const [scanVisible, setScanVisibility] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
@@ -40,7 +41,7 @@ export default function GestionCIS({SERVER_ADDRESS}) {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
     }
-    
+
     //TODO : gérer l'évènement clic
     const handleSuggestionPress = (suggestion) => {
         setSearchQuery(suggestion);
@@ -49,6 +50,7 @@ export default function GestionCIS({SERVER_ADDRESS}) {
     };
 
     function updateBdmStatus(CIS) {
+        //TODO : ne pas modifier le statut BDM directement
         fetch(SERVER_ADDRESS + '/updateMedStatus', {
             method: 'POST',
             headers: {
@@ -69,12 +71,11 @@ export default function GestionCIS({SERVER_ADDRESS}) {
         });
     }
 
-    //TODO: insert an scanning option
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
                 <Searchbar
-                    placeholder="Insérer un CIP"
+                    placeholder="Entrez un CIP ou un CIS"
                     onChangeText={(query) => {
                         setSearchQuery(query);
                         searchDrug(query); // Appeler la fonction de recherche à chaque changement dans la barre de recherche
@@ -86,14 +87,18 @@ export default function GestionCIS({SERVER_ADDRESS}) {
                 />
                 <Button
                     icon="data-matrix-scan"
+                    mode="contained"
                     onPress={() => setScanVisibility(true)}
                     buttonColor={"#FFF"}
-                    style={styles.button}
+                    textColor={"black"}
+                    compact={true}
                     contentStyle={styles.buttonIcon}
-                ></Button>
+                >Scan</Button>
             </View>
             <Portal>
-                <Modal visible={scanVisible} onDismiss={() => setScanVisibility(false)}>
+                <Modal visible={scanVisible}
+                       onDismiss={()=> setScanVisibility(false)}
+                       contentContainerStyle={styles.containerStyle}>
                     <DataMatrixScanner />
                 </Modal>
             </Portal>
@@ -101,21 +106,38 @@ export default function GestionCIS({SERVER_ADDRESS}) {
                 {suggestions.map((item, index) => (
                     <List.Item
                         key={index}
-                        title={item.Denomination} // Supposons que le nom du médicament est stocké dans la propriété 'Denomination' des données renvoyées
+                        title={item.Denomination}
                     />
                 ))}
             </List.Section>
         </View>
     );
+
+    function saveCIPtoDataBase(cip) {
+        {/*TODO PAS DU TOUT FINI*/}
+        fetch(SERVER_ADDRESS + '/addOrdonance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                idUser: getIdUser(),
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                AdaptativeAlert('Erreur du serveur')
+            } else {
+                return response.json();
+            }
+        }).then(data => {
+            //...
+        }).catch(error => {
+            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+        });
+    }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     searchContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
@@ -126,17 +148,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#E4F2CF',
         maxWidth: '80%'
     },
-    button: {
-        alignSelf: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderRadius: 10
-    },
     buttonIcon: {
-        alignSelf: 'center',
-        justifyContent: 'center',
-        height: 50,
-        width: 50
+        height: 56,
     },
     suggestionList: {
         backgroundColor: '#E4F2CF',
@@ -145,5 +158,9 @@ const styles = StyleSheet.create({
         width: '80%',
         alignSelf: 'left',
         borderRadius: 10,
+    },
+    containerStyle: {
+        backgroundColor: 'white',
+        padding: 20
     }
 });

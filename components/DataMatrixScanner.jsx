@@ -23,39 +23,37 @@ export default function DataMatrixScanner() {
     const handleBarCodeScanned = ({data}) => {
         setScanned(true)
         setTextScanned(data)
-    }
-
-    if(hasCameraPermission === null){
-        return(
-            <View>
-                <Text>En attente de permissions pour la caméra</Text>
-            </View>
-        )
-    }
-
-    if(hasCameraPermission === false){
-        return(
-            <View>
-                <Text>Caméra refusée</Text>
-                <Button onPress={askForCameraPermission} title={"Autoriser la caméra"}/>
-            </View>)
+        {/*TODO envoi sur BD*/}
     }
 
     return (
-            <View>
-                <CameraView barCodeScannerSettings={{barCodeTypes: ["datamatrix"],}}
-                            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} style={styles.camera}>
-                </CameraView>
-                <Text>{textScanned}</Text>
-                //TODO : envoi sur la BD du code CIS (ordonance)
-                {scanned && <Button title = "Scanner une nouvelle fois" onPress={() => setScanned(false)}/>}
-            </View>
-    )
+        <View style={styles.viewCam}>
+            {hasCameraPermission === null ? (
+                <Text>En attente de permissions pour la caméra</Text>
+            ) : hasCameraPermission === false ? (
+                <>
+                    <Text>Caméra refusée</Text>
+                    <Button onPress={askForCameraPermission} title={"Autoriser la caméra"} />
+                </>
+            ) : (
+                <>
+                    {!scanned && <CameraView
+                        barCodeScannerSettings={{ barCodeTypes: ["datamatrix"] }}
+                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                        style={styles.camera}
+                    />}
+                    <Text>{textScanned}</Text>
+                    {scanned && <Button title="Scanner une nouvelle fois" onPress={() => setScanned(false)} />}
+                </>
+            )}
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
     camera: {
-        height: 100,
-        width: 100
+        height: 200,
+        width: 200,
+        minHeight: 200
     }
 })

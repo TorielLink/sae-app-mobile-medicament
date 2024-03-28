@@ -2,18 +2,15 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import GestionCIS from '../components/GestionCIS';
 import { Calendar } from 'react-native-calendars';
-
-const SERVER_ADDRESS = 'https://remi-lem.alwaysdata.net/saeGestionMedicaments';
+import {SERVER_ADDRESS} from "../constants/constants";
 
 export default function Home() {
     return (
         <View style={stylesHome.screen}>
-            <View style={stylesHome.container}>
-                <GestionCIS SERVER_ADDRESS={SERVER_ADDRESS}/>
+                <GestionCIS/>
                 <Calendar
                     style={stylesHome.calendar}
                 />
-            </View>
         </View>
     );
 }

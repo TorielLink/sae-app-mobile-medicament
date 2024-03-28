@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, DataTable, Modal, Text} from 'react-native-paper';
 import {StyleSheet, View} from "react-native";
+import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
 const noDataOrdonances = [
@@ -11,7 +12,7 @@ const noDataOrdonances = [
     },
 ];
 
-export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
+export default function SelectionDrugs({hide, getIdUser}) {
     const [page, setPage] = useState(0);
     const [numberOfItemsPerPageList] = useState([2, 3, 4]);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);

@@ -93,7 +93,7 @@ app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
  * Search for a drug by CIS code
  */
 app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
-    let sql = 'SELECT Denomination FROM Medicaments WHERE Code_CIS LIKE ?';
+    let sql = 'SELECT Denomination FROM Medicaments WHERE Code_CIS LIKE ? LIMIT 20';
     let values = [
         `${req.body.CIS}%`
     ];
@@ -125,9 +125,9 @@ app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
     });
 });
 
-/**
+/*
  * Mettre à jour le statut Bdm du médicament
- */
+
 app.post(`${HOME_REP_SERVER}/updateMedStatus`, function (req, res) {
     let sql = 'UPDATE Medicaments SET StatutBdm = ? WHERE Code_CIS = ?';
     let values = [
@@ -143,6 +143,8 @@ app.post(`${HOME_REP_SERVER}/updateMedStatus`, function (req, res) {
         }
     });
 });
+*/
+
 
 /**
  * Remove drug from user's Ordonance table

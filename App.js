@@ -1,20 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import HomeScreen from './screens/HomeScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import {DefaultTheme, PaperProvider} from "react-native-paper";
+
+
+//--------------NAVIGATION--------------
+const Tab = createBottomTabNavigator();
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+    },
+};
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+            <PaperProvider theme={theme}>
+                <NavigationContainer>
+                    <Tab.Navigator initialRouteName="Home">
+                        <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: makeIconRender("cog"), tabBarActiveTintColor: "#7DAE32" }} />
+                        <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: makeIconRender("home"), tabBarActiveTintColor: "#7DAE32" }}/>
+                        <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: makeIconRender("baby-face-outline"), tabBarActiveTintColor: "#7DAE32" }}/>
+                    </Tab.Navigator>
+                </NavigationContainer>
+            </PaperProvider>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function makeIconRender(name) {
+    return ({ color, size }) => (
+        <MaterialCommunityIcons name={name} color={color} size={size} />
+    );
+}

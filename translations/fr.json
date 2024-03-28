@@ -1,3 +1,16 @@
 {
-  "greeting": "Bonjour !"
+  "common": {
+    "welcomeMessage": "Bienvenue dans mon application !",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "settingsScreen": {
+    "permissionDeniedTitle": "Autorisation Refusée",
+    "permissionDeniedNotification": "Vous avez refusé l'accès aux notifications.",
+    "permissionDeniedLocation": "Vous avez refusé l'accès à la localisation.",
+    "permissionDeniedCamera": "Vous avez refusé l'accès à la caméra.",
+    "notification": "Notifications",
+    "allowLocation": "Autoriser la localisation",
+    "allowCamera": "Autoriser la caméra"
+  }
 }

@@ -1,14 +1,15 @@
-import { useState    } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { Switch } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
+import i18n from 'i18next';
 
 export default function SettingsScreen() {
-    const [notificationEnabled, setNotificationEnabled] = useState(false);//TODO
-    const [localisationEnabled, setLocalisationEnabled] = useState(false);//TODO
-    const [cameraAccess, setCameraAccess] = useState(false);//TODO + ca lance des warnings sur telephone
+    const [notificationEnabled, setNotificationEnabled] = useState(false);
+    const [localisationEnabled, setLocalisationEnabled] = useState(false);
+    const [cameraAccess, setCameraAccess] = useState(false);
 
     const toggleNotificationSwitch = async () => {
         if (notificationEnabled) {
@@ -18,7 +19,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setNotificationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès aux notifications.');
+                Alert.alert(i18n.t('settingsScreen.permissionDeniedTitle'), i18n.t('settingsScreen.permissionDeniedNotification'));
             }
         }
     };
@@ -31,7 +32,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setLocalisationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la localisation.');
+                Alert.alert(i18n.t('settingsScreen.permissionDeniedTitle'), i18n.t('settingsScreen.permissionDeniedLocation'));
             }
         }
     };
@@ -44,9 +45,13 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setCameraAccess(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la caméra.');
+                Alert.alert(i18n.t('settingsScreen.permissionDeniedTitle'), i18n.t('settingsScreen.permissionDeniedCamera'));
             }
         }
+    };
+
+    const changeLanguage = (language) => {
+        i18n.changeLanguage(language);
     };
 
     return (
@@ -62,6 +67,12 @@ export default function SettingsScreen() {
             <View style={styles.setting}>
                 <Text>Autoriser la caméra</Text>
                 <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
+            </View>
+            <View style={styles.languageButtonContainer}>
+                <Button title="English" onPress={() => changeLanguage('en')} />
+                <Button title="Français" onPress={() => changeLanguage('fr')} />
+                <Button title="Espanol" onPress={() => changeLanguage('es')} />
+                <Button title="Deutsch" onPress={() => changeLanguage('de')} />
             </View>
             {cameraAccess && <Camera style={styles.camera} />}
         </View>
@@ -85,5 +96,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 300,
         marginTop: 20,
+    },
+    languageButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 20,
     },
 });

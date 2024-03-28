@@ -11,7 +11,7 @@ const Screen2 = () => {
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
     };
-    const [userConnected, setUserConnected] = useState(false);//TODO connection automatique
+    const [userConnected, setUserConnected] = useState(false); //TODO connection automatique
     const [creatingUser, setCreatingUser] = useState(false);
 
     const [titleText, setTitleText] = useState("Compte utilisateur");
@@ -31,19 +31,23 @@ const Screen2 = () => {
                 <View style={{ flexDirection: 'column' }}>
                     {userConnected &&
                         <View>
-                            <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            <Button icon="account-edit" mode="contained" onPress={changeProfileInfos}
+                                    buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                                 Modifier mes informations
                             </Button>
-                            <Button icon="pill" mode="contained" onPress={() => setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            <Button icon="pill" mode="contained" onPress={() =>
+                                setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                                 Mes médicaments
                             </Button>
                         </View>}
 
-                    {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                    {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile}
+                                                              buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                         Me connecter
                     </Button>}
 
-                    {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained" onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                    {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained"
+                                      onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                         Créer un compte
                     </Button>}
 

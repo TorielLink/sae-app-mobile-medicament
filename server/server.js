@@ -90,6 +90,24 @@ app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
 });
 
 /**
+ * Search for a drug by CIS code
+ */
+app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
+    let sql = 'SELECT Denomination FROM Medicaments WHERE Code_CIS LIKE ?';
+    let values = [
+        `${req.body.CIS}%`
+    ];
+    executeQuery(sql, values, function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
+    });
+});
+
+/**
  * Get user's drugs on the Ordonnance table
  */
 app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
@@ -103,6 +121,25 @@ app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
         }
         else {
             res.json(result);
+        }
+    });
+});
+
+/**
+ * Mettre à jour le statut Bdm du médicament
+ */
+app.post(`${HOME_REP_SERVER}/updateMedStatus`, function (req, res) {
+    let sql = 'UPDATE Medicaments SET StatutBdm = ? WHERE Code_CIS = ?';
+    let values = [
+        req.body.newStatus,
+        req.body.CIS
+    ];
+    executeQuery(sql, values, function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.send('Statut du médicament mis à jour avec succès');
         }
     });
 });

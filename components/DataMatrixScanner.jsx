@@ -20,7 +20,7 @@ export default function DataMatrixScanner() {
         })();
     }
 
-    const handleBarCodeScanned = ({type,data}) => {
+    const handleBarCodeScanned = ({data}) => {
         setScanned(true)
         setTextScanned(data)
     }

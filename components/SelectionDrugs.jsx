@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, DataTable, Modal, Text} from 'react-native-paper';
-import {Alert, Platform, StyleSheet, View} from "react-native";
-import {useEffect} from "react";
+import {StyleSheet, View} from "react-native";
+import AdaptativeAlert from "./AdaptativeAlert"
 
 const noDataOrdonances = [
     {
@@ -12,13 +12,10 @@ const noDataOrdonances = [
 ];
 
 export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
-    const [page, setPage] = React.useState(0);
-    const [numberOfItemsPerPageList] = React.useState([2, 3, 4]);
-    const [itemsPerPage, onItemsPerPageChange] = React.useState(
-        numberOfItemsPerPageList[0]
-    );
-
-    const [items, setItems] = React.useState([
+    const [page, setPage] = useState(0);
+    const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+    const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+    const [items, setItems] = useState([
         {
             key: 0,
             name: 'Chargement...',
@@ -29,7 +26,7 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
     const from = page * itemsPerPage;
     const to = Math.min((page + 1) * itemsPerPage, items.length);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
 
@@ -112,7 +109,7 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
             }),
         }).then(response => {
             if (!response.ok) {
-                showAlert('Erreur du serveur')
+                AdaptativeAlert('Erreur du serveur')
             }
             else {
                 return response.json();
@@ -120,7 +117,7 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
         }).then(data => {
             updateItems(data);
         }).catch(error => {
-                showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
     }
 
@@ -136,26 +133,16 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
             }),
         }).then(response => {
             if (!response.ok || response === 'OK') {
-                showAlert('Erreur du serveur')
+                AdaptativeAlert('Erreur du serveur')
             }
             else {
-                showAlert('Médicament supprimé');
+                AdaptativeAlert('Médicament supprimé');
                 hide();
             }
         }).catch(error => {
-            showAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
     }
-
-    function showAlert(message){
-        if(Platform.OS === 'web'){
-            alert(message)
-        }
-        else {
-            Alert.alert(message);
-        }
-    }
-
 };
 
 const styles = StyleSheet.create({

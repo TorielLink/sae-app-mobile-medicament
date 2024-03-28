@@ -1,19 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import SearchbarCIP from '../components/SearchbarCIP';
-import DataMatrixScanner from "../components/DataMatrixScanner";
+import GestionCIS from '../components/GestionCIS';
 import { Calendar } from 'react-native-calendars';
 
 export default function Home() {
     return (
         <View style={stylesHome.screen}>
             <View style={stylesHome.container}>
-                <SearchbarCIP />
+                <GestionCIS />
                 <Calendar
                     style={stylesHome.calendar}
                 />
             </View>
-            <DataMatrixScanner />
         </View>
     );
 }

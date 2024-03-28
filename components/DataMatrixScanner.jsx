@@ -47,6 +47,7 @@ export default function DataMatrixScanner() {
                             onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} style={styles.camera}>
                 </CameraView>
                 <Text>{textScanned}</Text>
+                //TODO : envoi sur la BD du code CIS (ordonance)
                 {scanned && <Button title = "Scanner une nouvelle fois" onPress={() => setScanned(false)}/>}
             </View>
     )

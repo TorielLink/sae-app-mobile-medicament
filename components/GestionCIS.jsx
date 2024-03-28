@@ -40,7 +40,8 @@ export default function GestionCIS({SERVER_ADDRESS}) {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
     }
-
+    
+    //TODO : gérer l'évènement clic
     const handleSuggestionPress = (suggestion) => {
         setSearchQuery(suggestion);
         setSuggestions([]);
@@ -69,23 +70,30 @@ export default function GestionCIS({SERVER_ADDRESS}) {
     }
 
     //TODO: insert an scanning option
-    return(
-        <View style={styles.view}>
-            <Searchbar
-                placeholder="Insérer un CIP"
-                onChangeText={setSearchQuery}
-                keyboardType={"numeric"}
-                value={searchQuery}
-                iconColor={"#7DAE32"}
-                style={styles.searchbar}/>
-            <Button
-                icon="data-matrix-scan"
-                onPress={() => setScanVisibility(true)}
-                buttonColor={"#FFF"}
-                style={styles.button}
-                contentStyle={styles.buttonIcon}/>
+    return (
+        <View style={styles.container}>
+            <View style={styles.searchContainer}>
+                <Searchbar
+                    placeholder="Insérer un CIP"
+                    onChangeText={(query) => {
+                        setSearchQuery(query);
+                        searchDrug(query); // Appeler la fonction de recherche à chaque changement dans la barre de recherche
+                    }}
+                    keyboardType={"numeric"}
+                    value={searchQuery}
+                    iconColor={"#7DAE32"}
+                    style={styles.searchbar}
+                />
+                <Button
+                    icon="data-matrix-scan"
+                    onPress={() => setScanVisibility(true)}
+                    buttonColor={"#FFF"}
+                    style={styles.button}
+                    contentStyle={styles.buttonIcon}
+                ></Button>
+            </View>
             <Portal>
-                <Modal visible={scanVisible} onDismiss={()=> setScanVisibility(false)}>
+                <Modal visible={scanVisible} onDismiss={() => setScanVisibility(false)}>
                     <DataMatrixScanner />
                 </Modal>
             </Portal>
@@ -102,10 +110,17 @@ export default function GestionCIS({SERVER_ADDRESS}) {
 }
 
 const styles = StyleSheet.create({
-    view: {
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    searchContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center'
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        width: '100%',
     },
     searchbar: {
         backgroundColor: '#E4F2CF',
@@ -118,11 +133,17 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     buttonIcon: {
+        alignSelf: 'center',
+        justifyContent: 'center',
         height: 50,
         width: 50
     },
     suggestionList: {
+        backgroundColor: '#E4F2CF',
         marginTop: 10,
-        maxHeight: 200
+        maxHeight: 200,
+        width: '80%',
+        alignSelf: 'left',
+        borderRadius: 10,
     }
 });

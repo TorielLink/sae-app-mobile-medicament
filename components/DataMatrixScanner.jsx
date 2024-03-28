@@ -1,13 +1,14 @@
 import { CameraView } from 'expo-camera/next';
-import {Camera} from 'expo-camera'
+import { Camera } from 'expo-camera'
 import React, { useState, useEffect} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import { Button, StyleSheet, Text } from 'react-native';
+import AdaptativeAlert from "./AdaptativeAlert";
+import CIP13_REGEX from "../constants/constants";
 
-export default function DataMatrixScanner() {
+export default function DataMatrixScanner({sendCIP}) {
     {/*TODO : le composant lance des warnings*/}
     const[hasCameraPermission, setHasCameraPermission] = useState(null)
     const[scanned, setScanned] = useState(null)
-    const[textScanned, setTextScanned] = useState('Aucun scan effectué')
 
     useEffect(() => {
         askForCameraPermission();
@@ -20,14 +21,24 @@ export default function DataMatrixScanner() {
         })();
     }
 
+    function cleanCIPAndSend(data) {
+        const result = data.trim().replace(/\D/g, '').match(CIP13_REGEX);
+        if(result[1]){
+            //TODO ne marche pas
+            //sendCIP(match[1]);
+        }
+        else {
+            AdaptativeAlert('Merci de scanner un médicament');
+        }
+    }
+
     const handleBarCodeScanned = ({data}) => {
         setScanned(true)
-        setTextScanned(data)
-        {/*TODO envoi sur BD*/}
+        cleanCIPAndSend(data);
     }
 
     return (
-        <View style={styles.viewCam}>
+        <>
             {hasCameraPermission === null ? (
                 <Text>En attente de permissions pour la caméra</Text>
             ) : hasCameraPermission === false ? (
@@ -42,11 +53,10 @@ export default function DataMatrixScanner() {
                         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
                         style={styles.camera}
                     />}
-                    <Text>{textScanned}</Text>
                     {scanned && <Button title="Scanner une nouvelle fois" onPress={() => setScanned(false)} />}
                 </>
             )}
-        </View>
+        </>
     );
 }
 

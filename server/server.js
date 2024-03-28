@@ -93,7 +93,7 @@ app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
  * Search for a drug by CIS code
  */
 app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
-    let sql = 'SELECT Denomination FROM Medicaments WHERE Code_CIS LIKE ? LIMIT 20';
+    let sql = 'SELECT Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? LIMIT 20';
     let values = [
         `${req.body.CIS}%`
     ];

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Portal, Searchbar, List } from 'react-native-paper';
-import {StyleSheet, View} from "react-native";
+import { StyleSheet, View } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 import DataMatrixScanner from "./DataMatrixScanner";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {SERVER_ADDRESS} from "../constants/constants";
@@ -9,6 +11,8 @@ export default function GestionCIS() {
     const [searchQuery, setSearchQuery] = useState('');
     const [scanVisible, setScanVisibility] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
+    const [offlineQueue, setOfflineQueue] = useState([]);
+    const [isConnected, setIsConnected] = useState(true);
 
     useEffect(() => {
         if (searchQuery.length > 0) {
@@ -17,6 +21,29 @@ export default function GestionCIS() {
             setSuggestions([]);
         }
     }, [searchQuery]);
+
+    useEffect(() => {
+        AsyncStorage.getItem('userInput')
+            .then((input) => {
+                if (input) {
+                    setSearchQuery(input);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement de la saisie locale:', error);
+            });
+    }, []);
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setIsConnected(state.isConnected);
+            if (isConnected)
+                sendOfflineData();
+        });
+        return () => {
+            unsubscribe();
+        };
+    }, []);
 
     //TODO: connect to a database
     function searchDrug(CIS) {
@@ -38,7 +65,7 @@ export default function GestionCIS() {
             const limitedSuggestions = data.slice(0, 5);
             setSuggestions(limitedSuggestions);
         }).catch(error => {
-            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
+            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')' + error);
         });
     }
 
@@ -46,39 +73,65 @@ export default function GestionCIS() {
     const handleSuggestionPress = (suggestion) => {
         setSearchQuery(suggestion);
         setSuggestions([]);
-        updateBdmStatus(suggestion);
+        saveInputLocally(suggestion);
+        saveCIPToDataBase(suggestion);
     };
 
-    function updateBdmStatus(CIS) {
-        //TODO : ne pas modifier le statut BDM directement
-        fetch(SERVER_ADDRESS + '/updateMedStatus', {
+    function saveCIPToDataBase(CIP) { // CIP ou CIS ??
+        {/*TODO PAS DU TOUT FINI
+        fetch(SERVER_ADDRESS + '/addOrdonance', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                CIS: CIS,
-                newStatus: 'Warning disponibilité',
+                idUser: getIdUser(),
+                CIP: CIP,
+                newStatus: true
             }),
         }).then(response => {
             if (!response.ok) {
-                AdaptativeAlert('Erreur lors de la mise à jour du statut Bdm');
+                AdaptativeAlert('Erreur lors du signalement du médicament')
             } else {
-                AdaptativeAlert('Statut Bdm mis à jour avec succès');
+                AdaptativeAlert('Médicament signalé avec succès');
             }
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
+        */}
+    }
+
+    function saveInputLocally(input) {
+        AsyncStorage.setItem('userInput', input)
+            .then(() => {
+                console.log('Saisie enregistrée localement avec succès.');
+                setOfflineQueue(prevQueue => [...prevQueue, input]);
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'enregistrement de la saisie localement:', error);
+            });
+    }
+
+    function sendOfflineData() {
+        offlineQueue.forEach(input => {
+            saveCIPToDataBase(input);
+        });
+        setOfflineQueue([]);
     }
 
     return (
         <View style={styles.container}>
+            <View>
+                {!isConnected && (
+                    <Text>Hors connexion</Text>
+                )}
+            </View>
             <View style={styles.searchContainer}>
                 <Searchbar
                     placeholder="Entrez un CIP ou un CIS"
                     onChangeText={(query) => {
                         setSearchQuery(query);
-                        searchDrug(query); // Appeler la fonction de recherche à chaque changement dans la barre de recherche
+                        searchDrug(query);
                     }}
                     keyboardType={"numeric"}
                     value={searchQuery}
@@ -99,42 +152,21 @@ export default function GestionCIS() {
                 <Modal visible={scanVisible}
                        onDismiss={()=> setScanVisibility(false)}
                        contentContainerStyle={styles.containerStyle}>
-                    <DataMatrixScanner />
+                    <DataMatrixScanner sendCIP={(cip) => saveCIPToDataBase(cip)}/>
                 </Modal>
             </Portal>
+
             <List.Section style={styles.suggestionList}>
-                {suggestions.map((item, index) => (
+                {searchQuery.length > 0 && suggestions.map((item, index) => (
                     <List.Item
                         key={index}
                         title={item.Denomination}
+                        onPress={() => handleSuggestionPress(item.CIS)}
                     />
                 ))}
             </List.Section>
         </View>
     );
-
-    function saveCIPtoDataBase(cip) {
-        {/*TODO PAS DU TOUT FINI*/}
-        fetch(SERVER_ADDRESS + '/addOrdonance', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                idUser: getIdUser(),
-            }),
-        }).then(response => {
-            if (!response.ok) {
-                AdaptativeAlert('Erreur du serveur')
-            } else {
-                return response.json();
-            }
-        }).then(data => {
-            //...
-        }).catch(error => {
-            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
-        });
-    }
 }
 
 const styles = StyleSheet.create({
@@ -152,6 +184,11 @@ const styles = StyleSheet.create({
         height: 56,
     },
     suggestionList: {
+        position: 'absolute',
+        top: 50,
+        left: 0,
+        right: 0,
+        zIndex: 5,//TODO : not working
         backgroundColor: '#E4F2CF',
         marginTop: 10,
         maxHeight: 200,
@@ -162,5 +199,5 @@ const styles = StyleSheet.create({
     containerStyle: {
         backgroundColor: 'white',
         padding: 20
-    }
+    },
 });

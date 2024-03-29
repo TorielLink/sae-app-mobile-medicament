@@ -2,13 +2,13 @@ import { useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {DefaultTheme, PaperProvider} from "react-native-paper";
 
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ChartsScreen from './screens/ChartsScreen';
 
-//--------------NAVIGATION--------------
 const Tab = createBottomTabNavigator();
 
 const theme = {

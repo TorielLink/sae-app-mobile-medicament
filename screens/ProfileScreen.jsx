@@ -184,6 +184,7 @@ export default function ProfileScreen({ setIsAdmin }) {
         setFirstName('');
         setLastName('');
         setPasswordUser('');
+        setIsAdmin(false);
         setUserConnected(false);
         setTitleText("Compte utilisateur");
     }
@@ -251,6 +252,7 @@ export default function ProfileScreen({ setIsAdmin }) {
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
                 setIdUser(data[0].Id_Utilisateur);
+                setAsAdmin();
                 setUserConnected(true);
             }
             setShowForm(false);
@@ -353,6 +355,6 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     buttonStyle: {
-        marginBottom: 10,
+        marginTop: 10,
     }
 });

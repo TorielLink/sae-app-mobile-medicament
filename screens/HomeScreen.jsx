@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import GestionCIS from '../components/GestionCIS';
-import { Calendar } from 'react-native-calendars';
+import {Calendar} from "react-native-calendars";
 
 export default function Home() {
     return (
         <View style={stylesHome.screen}>
-            <GestionCIS/>
+            <View style={{zIndex: 5}}>
+                <GestionCIS/>
+            </View>
             <Calendar
                 style={stylesHome.calendar}
             />

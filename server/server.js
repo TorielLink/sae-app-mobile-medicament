@@ -170,6 +170,9 @@ app.post(`${HOME_REP_SERVER}/login`, function (req, res){
     });
 });
 
+/**
+ * Create an account
+ */
 app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
     if(req.body.passwordUser.length < MIN_LENGTH_PASSWORD_USER || req.body.firstName < MIN_LENGTH_NAME_USER || req.body.lastName < MIN_LENGTH_NAME_USER){
         res.status(500).json({errorMessage: 'Un des champs est trop court.'});
@@ -191,10 +194,12 @@ app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
     });
 });
 
-/*
-Update user information : TODO: Ne fonctionne pas
-*/
+/**
+ * Update user's information
+ */
 app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
+    //TODO ne fonctionne pas
+    //piste : tu selectionne en fonction de firstName sauf que dans le corps de la requete c'est le meme qui est le nouveau
     const { firstName, lastName, password } = req.body;
     let idUser = -1;
 
@@ -277,7 +282,11 @@ app.post(`${HOME_REP_SERVER}/delete`, function (req, res){
     });
 });
 
+/**
+ * Add a drug to the user's Ordonance table
+ */
 app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
+    //TODO a faire
     let sql = 'INSERT INTO Ordonnance(ID_UTILISATEUR, CODE_CIS, QUANTITÉ) VALUES (?, ?, ?)';
     let idUser = -1;
     let quantity = req.body.quantityMedoc;
@@ -302,9 +311,27 @@ app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
                     res.status(500).json(error);
                 }
                 else {
-                    res.json(result);
+                    res.send("OK");
                 }
             })
+        }
+    });
+});
+
+/**
+ * test is user is admin
+ */
+app.post(`${HOME_REP_SERVER}/verifyAdmin`, function (req, res){
+    let sql = 'SELECT Admin FROM Utilisateurs WHERE Id_Utilisateur = ?';
+    let values = [
+        req.body.idUser
+    ];
+    executeQuery(sql, values, function(error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
         }
     });
 });

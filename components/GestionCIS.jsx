@@ -67,8 +67,6 @@ export default function GestionCIS() {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')' + error);
         });
     }
-
-    //TODO : gérer l'évènement clic
     const handleSuggestionPress = (suggestion) => {
         setSearchQuery(suggestion);
         setSuggestions([]);
@@ -77,9 +75,10 @@ export default function GestionCIS() {
     };
 
     function saveCIPToDataBase(CIP) {
+        //TODO a faire
         AdaptativeAlert("CIP " + CIP + " SAVED TO BD")
-        {/*TODO PAS DU TOUT FINI
-        fetch(SERVER_ADDRESS + '/addOrdonance', {
+        /*
+        fetch(SERVER_ADDRESS + '/prescription', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -98,17 +97,16 @@ export default function GestionCIS() {
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
-        */}
+        */
     }
 
     function saveInputLocally(input) {
         AsyncStorage.setItem('userInput', input)
             .then(() => {
-                console.log('Saisie enregistrée localement avec succès.');
                 setOfflineQueue(prevQueue => [...prevQueue, input]);
             })
             .catch(error => {
-                console.error('Erreur lors de l\'enregistrement de la saisie localement:', error);
+                AdaptativeAlert('Erreur lors de l\'enregistrement de la saisie localement:', error);
             });
     }
 
@@ -188,7 +186,6 @@ const styles = StyleSheet.create({
         top: 50,
         left: 0,
         right: 0,
-        zIndex: 5,//TODO : not working
         backgroundColor: '#E4F2CF',
         marginTop: 10,
         maxHeight: 200,

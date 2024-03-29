@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Linking, Alert, Platform, Picker } from 'react-native'; // Importez Picker depuis react-native
+import { View, Text, StyleSheet, Linking, Alert, Platform, Picker } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import { useTranslation } from 'react-i18next';
+import { i18n } from 'react-i18next';
 
 import lang_en from '../translations/en.json';
 import lang_fr from '../translations/fr.json';
@@ -14,21 +15,20 @@ const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
 const ProfileScreen = () => {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
 
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application');
     };
     const [userConnected, setUserConnected] = useState(false);
     const [creatingUser, setCreatingUser] = useState(false);
-    const [selectedLanguage, setSelectedLanguage] = useState(i18n.language); // État de la langue sélectionnée
+    const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
 
     useEffect(() => {
-        // Mettre à jour la langue de l'application lorsque la langue sélectionnée change
         i18n.changeLanguage(selectedLanguage);
     }, [selectedLanguage]);
 
-    const [titleText, setTitleText] = useState(t('profileScreen.userAccount'));
+    const [titleText, setTitleText] = useState(i18n.t('profileScreen.userAccount')); // Utiliser i18n.t pour traduire la chaîne
 
     const [idUser, setIdUser] = useState();
     const [firstName, setFirstName] = useState('');
@@ -38,7 +38,6 @@ const ProfileScreen = () => {
     const [showForm, setShowForm] = useState(false);
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
 
-    // Fonction pour changer la langue
     const changeLanguage = (language) => {
         setSelectedLanguage(language);
     };
@@ -47,7 +46,6 @@ const ProfileScreen = () => {
         <View>
             <View style={styles.screen}>
                 <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
-                {/* Ajouter le Picker pour choisir la langue */}
                 <Picker
                     selectedValue={selectedLanguage}
                     style={{ height: 50, width: 150 }}
@@ -62,58 +60,58 @@ const ProfileScreen = () => {
                     {userConnected &&
                         <View>
                             <Button icon="account-edit" mode="contained" onPress={changeProfileInfos} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                {t('profileScreen.modifyInfos')}
+                                {i18n.t('profileScreen.modifyInfos')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                             <Button icon="pill" mode="contained" onPress={() => setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                {t('profileScreen.myDrugs')}
+                                {i18n.t('profileScreen.myDrugs')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                         </View>}
 
                     {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        {t('profileScreen.signIn')}
+                        {i18n.t('profileScreen.signIn')} {/* Utiliser i18n.t pour traduire la chaîne */}
                     </Button>}
 
                     {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained" onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        {t('profileScreen.createAccount')}
+                        {i18n.t('profileScreen.createAccount')} {/* Utiliser i18n.t pour traduire la chaîne */}
                     </Button>}
 
                     {showForm &&
                         <View>
                             <TextInput
-                                label={t('profileScreen.firstName')}
+                                label={i18n.t('profileScreen.firstName')} {/* Utiliser i18n.t pour traduire la chaîne */}
                                 value={firstName}
                                 onChangeText={text => setFirstName(text)}
                             />
                             <TextInput
-                                label={t('profileScreen.lastName')}
+                                label={i18n.t('profileScreen.lastName')} {/* Utiliser i18n.t pour traduire la chaîne */}
                                 value={lastName}
                                 onChangeText={text => setLastName(text)}
                             />
                             <TextInput
-                                label={t('profileScreen.password')}
+                                label={i18n.t('profileScreen.password')} {/* Utiliser i18n.t pour traduire la chaîne */}
                                 value={passwordUser}
                                 onChangeText={text => setPasswordUser(text)}
                                 secureTextEntry={true}
                             />
                             <Button icon="chevron-right-circle-outline" mode="contained" onPress={(creatingUser ? submitCreateUserForm : submitLoginForm)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                                {t('profileScreen.validate')}
+                                {i18n.t('profileScreen.validate')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                             <Button icon="close-circle-outline" mode="contained" onPress={cancelForm} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                {t('profileScreen.cancel')}
+                                {i18n.t('profileScreen.cancel')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                         </View>}
 
                     <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        {t('profileScreen.contactUs')}
+                        {i18n.t('profileScreen.contactUs')} {/* Utiliser i18n.t pour traduire la chaîne */}
                     </Button>
 
                     {userConnected &&
                         <View>
                             <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                {t('profileScreen.signOut')}
+                                {i18n.t('profileScreen.signOut')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                             <Button icon="delete-forever" mode="contained" onPress={deleteProfile} buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
-                                {t('profileScreen.deleteAccount')}
+                                {i18n.t('profileScreen.deleteAccount')} {/* Utiliser i18n.t pour traduire la chaîne */}
                             </Button>
                         </View>}
 

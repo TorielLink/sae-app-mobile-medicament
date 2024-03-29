@@ -3,10 +3,8 @@ import { Camera } from 'expo-camera'
 import React, { useState, useEffect} from 'react';
 import { Button, StyleSheet, Text } from 'react-native';
 import AdaptativeAlert from "./AdaptativeAlert";
-import CIP13_REGEX from "../constants/constants";
 
 export default function DataMatrixScanner({sendCIP}) {
-    {/*TODO : le composant lance des warnings*/}
     const[hasCameraPermission, setHasCameraPermission] = useState(null)
     const[scanned, setScanned] = useState(null)
 
@@ -22,10 +20,10 @@ export default function DataMatrixScanner({sendCIP}) {
     }
 
     function cleanCIPAndSend(data) {
-        const result = data.trim().replace(/\D/g, '').match(CIP13_REGEX);
-        if(result[1]){
-            //TODO ne marche pas
-            //sendCIP(match[1]);
+        const regex = /010(\d{13})/;
+        const matchedCIP = data.match(regex);
+        if(matchedCIP){
+            sendCIP(matchedCIP[1]);
         }
         else {
             AdaptativeAlert('Merci de scanner un médicament');

@@ -10,7 +10,7 @@ require('dotenv').config();
 const port = process.env.PORT ?? 8100;
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
-const HOME_REP_SERVER = "/saeGestionMedicaments";//TODO pour faire en local modifier par ""
+const HOME_REP_SERVER = "/saeGestionMedicaments";//pour un serveur en local, modifier par ""
 
 // creating connection
 const connection = mysql.createConnection({
@@ -71,22 +71,6 @@ function getIdUser(firstName, lastName, callback) {
  */
 app.get(`${HOME_REP_SERVER}/`, function (req, res){
     res.send("Server OK, please read the documentation to know how to use it.");
-});
-
-/**
- * Test query on drug
- * TODO : remove
- */
-app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
-    let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283';
-    executeQuery(sql, [], function (error, result){
-        if(error){
-            res.status(500).json(error);
-        }
-        else {
-            res.json(result);
-        }
-    });
 });
 
 /**
@@ -227,7 +211,7 @@ app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
 
     if (updateFields.length > 0) {
         let updateFieldsString = updateFields.join(", ");
-        sql = "UPDATE UTILISATEUR SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
+        sql = "UPDATE Utilisateurs SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
         getIdUser(req.body.firstName, req.body.lastName, function (error, result) {
             if (error) {
                 res.status(500).json(error);

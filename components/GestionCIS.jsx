@@ -45,7 +45,6 @@ export default function GestionCIS() {
         };
     }, []);
 
-    //TODO: connect to a database
     function searchDrug(CIS) {
         fetch(SERVER_ADDRESS + '/searchDrug', {
             method: 'POST',
@@ -78,7 +77,8 @@ export default function GestionCIS() {
     };
 
     function saveCIPToDataBase(CIP) {
-        {/*TODO PAS DU TOUT FINI*/
+        AdaptativeAlert("CIP " + CIP + " SAVED TO BD")
+        {/*TODO PAS DU TOUT FINI
         fetch(SERVER_ADDRESS + '/addOrdonance', {
             method: 'POST',
             headers: {
@@ -98,7 +98,7 @@ export default function GestionCIS() {
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
-        }
+        */}
     }
 
     function saveInputLocally(input) {

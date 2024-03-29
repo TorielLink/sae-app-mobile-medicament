@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking, Alert} from 'react-native';
+import {View, Text, StyleSheet, Linking} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import {SERVER_ADDRESS} from "../constants/constants";
@@ -15,6 +15,8 @@ export default function ProfileScreen() {
     };
     const [userConnected, setUserConnected] = useState(false); //TODO connection automatique
     const [creatingUser, setCreatingUser] = useState(false);
+    const [changingProfileInfos, setChangingProfileInfos] = useState(false);
+    const [deletingProfile, setDeletingProfile] = useState(false);
 
     const [titleText, setTitleText] = useState("Compte utilisateur");
 
@@ -33,7 +35,7 @@ export default function ProfileScreen() {
                 <View style={{ flexDirection: 'column' }}>
                     {userConnected &&
                         <View>
-                            <Button icon="account-edit" mode="contained" onPress={changeProfileInfos}
+                            <Button icon="account-edit" mode="contained" onPress={() => setChangingProfileInfos(true)}
                                     buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                                 Modifier mes informations
                             </Button>
@@ -49,7 +51,7 @@ export default function ProfileScreen() {
                     </Button>}
 
                     {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained"
-                                      onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                                              onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                         Créer un compte
                     </Button>}
 
@@ -72,7 +74,7 @@ export default function ProfileScreen() {
                                 secureTextEntry={true}
                             />
                             <Button icon="chevron-right-circle-outline" mode="contained" onPress={
-                                (creatingUser ? submitCreateUserForm : submitLoginForm)/*TODO voir si ca plante pas ici*/
+                                (creatingUser ? submitCreateUserForm : submitLoginForm)
                             } buttonColor={"#7DAE32"} style={styles.buttonStyle}>
                                 Valider
                             </Button>
@@ -104,46 +106,43 @@ export default function ProfileScreen() {
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}
+            {userConnected && changingProfileInfos &&
+                <ModalAlert
+                    title="Modifier mes informations"
+                    message="Entrez vos nouvelles informations :"
+                    buttons={[
+                        {
+                            text: 'Annuler',
+                            style: 'cancel',
+                            onPress: () => setChangingProfileInfos(false)
+                        },
+                        {
+                            text: 'Valider',
+                            onPress: (newInfo) => updateProfile(newInfo),
+                        },
+                    ]}
+                />}
+            {userConnected && deletingProfile &&
+                <ModalAlert
+                    title="Suppression de compte"
+                    message="Êtes vous sur de vouloir supprimer votre compte ?"
+                    buttons={[
+                        {
+                            text: 'Annuler',
+                            style: 'cancel',
+                            onPress: () => setDeletingProfile(false)
+                        },
+                        {
+                            text: 'OK',
+                            onPress: deleteProfileConfirmed,
+                        },
+                    ]}
+                />}
         </View>
     );
 
-    function changeProfileInfos() {
-        updateProfile({firstName: 'Cloclo'});
-        /*Alert.prompt(
-            'Modifier mes informations',
-            'Entrez vos nouvelles informations :',
-            [
-                {
-                    text: 'Annuler',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Valider',
-                    onPress: (newInfo) => updateProfile(newInfo),
-                },
-            ],
-            'plain-text'
-        );*/
-        //TODO: NE FONCTIONNE PAS
-        /*return (
-            <ModalAlert
-                title="Modifier mes informations"
-                message="Entrez vos nouvelles informations :"
-                buttons={[
-                    {
-                        text: 'Annuler',
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'Valider',
-                        onPress: (newInfo) => updateProfile(newInfo),
-                    },
-                ]}
-            />
-        );*/
-    }
-
     function updateProfile(newInfo) {
+        setChangingProfileInfos(false);
         fetch(SERVER_ADDRESS + '/updateProfile', {
             method: 'POST',
             headers: {
@@ -271,80 +270,52 @@ export default function ProfileScreen() {
     }
 
     function deleteProfile() {
-        Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
-            //TODO generaliser l'alerte (ne marche pas pour le web)
-            {
-                text: 'Annuler',
-                style: 'cancel',
-            },
-            {
-                cancelable: true,
-            },
-            {
-                text: 'OK', onPress: deleteProfileConfirmed
-            }
-        ]);
-        //TODO: NE FONCTIONNE PAS
-        /*return (
-            <ModalAlert
-                title="Suppression de compte"
-                message="Êtes vous sur de vouloir supprimer votre compte ?"
-                buttons={[
-                    {
-                        text: 'Annuler',
-                        style: 'cancel',
-                    },
-                    {
-                        text: 'OK',
-                        onPress: deleteProfileConfirmed,
-                    },
-                ]}
-            />
-        );*/
-}
+        setDeletingProfile(true);
+    }
 
-function deleteProfileConfirmed() {
-fetch(SERVER_ADDRESS + '/delete', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        firstName: firstName,
-        lastName: lastName
-    }),
-}).then(response => {
-    if (!response.ok) {
-        AdaptativeAlert('Erreur du serveur');
+    function deleteProfileConfirmed() {
+        setDeletingProfile(false)
+        fetch(SERVER_ADDRESS + '/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                firstName: firstName,
+                lastName: lastName
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                AdaptativeAlert('Erreur du serveur');
+            }
+            else {
+                return response;
+            }
+        }).then(data => {
+            if(data.text() === "ERROR"){
+                AdaptativeAlert('Erreur de suppression');
+            }
+            else {
+                AdaptativeAlert('Compte supprimé');
+                disconnectProfile();
+            }
+        })
+            .catch(error => {
+                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+            });
     }
-    else {
-        return response;
-    }
-}).then(data => {
-    if(data.text() === "ERROR"){
-        AdaptativeAlert('Erreur de suppression');
-    }
-    else {
-        AdaptativeAlert('Compte supprimé');
-        disconnectProfile();
-    }
-})
-    .catch(error => {
-        AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
-    });
-}
 };
 
 const styles = StyleSheet.create({
-screen: {
-alignItems: 'center',
-},
-title: {
-fontSize: 30,
-marginTop: 20,
-marginBottom: 30,
-},
-buttonStyle: {
-marginBottom: 10,
-}
+    screen: {
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 30,
+        marginTop: 20,
+        marginBottom: 30,
+    },
+    buttonStyle: {
+        marginBottom: 10,
+    }
 });

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking} from 'react-native';
+import {View, Text, StyleSheet, Linking, Alert} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import {SERVER_ADDRESS} from "../constants/constants";
@@ -108,8 +108,7 @@ export default function ProfileScreen() {
     );
 
     function changeProfileInfos() {
-        //TODO: NE FONCTIONNE PAS
-        /*Alert.prompt(
+        Alert.prompt(
             'Modifier mes informations',
             'Entrez vos nouvelles informations :',
             [
@@ -123,21 +122,24 @@ export default function ProfileScreen() {
                 },
             ],
             'plain-text'
+        );
+        //TODO: NE FONCTIONNE PAS
+        /*return (
+            <ModalAlert
+                title="Modifier mes informations"
+                message="Entrez vos nouvelles informations :"
+                buttons={[
+                    {
+                        text: 'Annuler',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'Valider',
+                        onPress: (newInfo) => updateProfile(newInfo),
+                    },
+                ]}
+            />
         );*/
-        ModalAlert({
-            title: 'Modifier mes informations',
-            message: 'Entrez vos nouvelles informations :',
-            buttons: [
-                {
-                    text: 'Annuler',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Valider',
-                    onPress: (newInfo) => updateProfile(newInfo),
-                },
-            ],
-        });
     }
 
     function updateProfile(newInfo) {
@@ -268,8 +270,7 @@ export default function ProfileScreen() {
     }
 
     function deleteProfile() {
-        //TODO: NE FONCTIONNE PAS
-        /*Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
+        Alert.alert('Suppression de compte', 'Êtes vous sur de vouloir supprimer votre copte ?', [
             //TODO generaliser l'alerte (ne marche pas pour le web)
             {
                 text: 'Annuler',
@@ -281,65 +282,68 @@ export default function ProfileScreen() {
             {
                 text: 'OK', onPress: deleteProfileConfirmed
             }
-        ]);*/
-        ModalAlert({
-            title: 'Suppression de compte',
-            message: 'Êtes-vous sûr de vouloir supprimer votre compte ?',
-            buttons: [
-                {
-                    text: 'Annuler',
-                    style: 'cancel',
-                },
-                {
-                    text: 'OK',
-                    onPress: deleteProfileConfirmed,
-                },
-            ],
-        });
-    }
+        ]);
+        //TODO: NE FONCTIONNE PAS
+        /*return (
+            <ModalAlert
+                title="Suppression de compte"
+                message="Êtes vous sur de vouloir supprimer votre compte ?"
+                buttons={[
+                    {
+                        text: 'Annuler',
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: deleteProfileConfirmed,
+                    },
+                ]}
+            />
+        );*/
+}
 
-    function deleteProfileConfirmed() {
-        fetch(SERVER_ADDRESS + '/delete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                firstName: firstName,
-                lastName: lastName
-            }),
-        }).then(response => {
-            if (!response.ok) {
-                AdaptativeAlert('Erreur du serveur');
-            }
-            else {
-                return response;
-            }
-        }).then(data => {
-            if(data.text() === "ERROR"){
-                AdaptativeAlert('Erreur de suppression');
-            }
-            else {
-                AdaptativeAlert('Compte supprimé');
-                disconnectProfile();
-            }
-        })
-            .catch(error => {
-                AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
-            });
+function deleteProfileConfirmed() {
+fetch(SERVER_ADDRESS + '/delete', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName
+    }),
+}).then(response => {
+    if (!response.ok) {
+        AdaptativeAlert('Erreur du serveur');
     }
+    else {
+        return response;
+    }
+}).then(data => {
+    if(data.text() === "ERROR"){
+        AdaptativeAlert('Erreur de suppression');
+    }
+    else {
+        AdaptativeAlert('Compte supprimé');
+        disconnectProfile();
+    }
+})
+    .catch(error => {
+        AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+    });
+}
 };
 
 const styles = StyleSheet.create({
-    screen: {
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 30,
-        marginTop: 20,
-        marginBottom: 30,
-    },
-    buttonStyle: {
-        marginBottom: 10,
-    }
+screen: {
+alignItems: 'center',
+},
+title: {
+fontSize: 30,
+marginTop: 20,
+marginBottom: 30,
+},
+buttonStyle: {
+marginBottom: 10,
+}
 });

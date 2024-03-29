@@ -108,7 +108,8 @@ export default function ProfileScreen() {
     );
 
     function changeProfileInfos() {
-        Alert.prompt(
+        updateProfile({firstName: 'Cloclo'});
+        /*Alert.prompt(
             'Modifier mes informations',
             'Entrez vos nouvelles informations :',
             [
@@ -122,7 +123,7 @@ export default function ProfileScreen() {
                 },
             ],
             'plain-text'
-        );
+        );*/
         //TODO: NE FONCTIONNE PAS
         /*return (
             <ModalAlert

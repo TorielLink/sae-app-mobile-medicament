@@ -77,7 +77,7 @@ export default function GestionCIS() {
         saveCIPToDataBase(suggestion);
     };
 
-    function saveCIPToDataBase(CIP) { // CIP ou CIS ??
+    function saveCIPToDataBase(CIP) {
         {/*TODO PAS DU TOUT FINI*/
         fetch(SERVER_ADDRESS + '/addOrdonance', {
             method: 'POST',

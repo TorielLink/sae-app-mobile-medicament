@@ -208,7 +208,7 @@ app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
 });
 
 /*
-UPDATE INFORMATION
+Update user information : TODO: Ne fonctionne pas
 */
 app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
     const { firstName, lastName, password } = req.body;
@@ -228,12 +228,10 @@ app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
     if (updateFields.length > 0) {
         let updateFieldsString = updateFields.join(", ");
         sql = "UPDATE UTILISATEUR SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
-        values = [token];
-        getIdUser(req.body.firstName, req.body.lastName, function (error, result){
-            if(error){
+        getIdUser(req.body.firstName, req.body.lastName, function (error, result) {
+            if (error) {
                 res.status(500).json(error);
-            }
-            else {
+            } else {
                 idUser = result[0].Id_Utilisateur;
                 let values = [
                     idUser
@@ -248,10 +246,9 @@ app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
                 });
             }
         });
-        } else {
-            res.status(400).json('No fields to update');
-        }
-
+    } else {
+        res.status(400).json('No fields to update');
+    }
 });
 
 

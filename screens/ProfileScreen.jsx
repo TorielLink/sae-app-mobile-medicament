@@ -9,7 +9,7 @@ import ModalAlert from '../components/ModalAlert';
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ setIsAdmin }) {
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
     };
@@ -35,23 +35,38 @@ export default function ProfileScreen() {
                 <View style={{ flexDirection: 'column' }}>
                     {userConnected &&
                         <View>
-                            <Button icon="account-edit" mode="contained" onPress={() => setChangingProfileInfos(true)}
-                                    buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            <Button
+                                icon="account-edit"
+                                mode="contained"
+                                onPress={() => setChangingProfileInfos(true)}
+                                buttonColor={"#7DAE32"}
+                                style={styles.buttonStyle}>
                                 Modifier mes informations
                             </Button>
-                            <Button icon="pill" mode="contained" onPress={() =>
-                                setDrugsModifVisibility(true)} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                            <Button
+                                icon="pill"
+                                mode="contained"
+                                onPress={() => setDrugsModifVisibility(true)}
+                                buttonColor={"#7DAE32"}
+                                style={styles.buttonStyle}>
                                 Mes médicaments
                             </Button>
                         </View>}
 
-                    {(!userConnected && !showForm) && <Button icon="login" mode="contained" onPress={connectProfile}
-                                                              buttonColor={"#7DAE32"} style={styles.buttonStyle}>
-                        Me connecter
-                    </Button>}
+                    {(!userConnected && !showForm) &&
+                        <Button
+                            icon="login"
+                            mode="contained"
+                            onPress={connectProfile}
+                            buttonColor={"#7DAE32"}
+                            style={styles.buttonStyle}>
+                            Me connecter
+                        </Button>
+                    }
 
                     {(!userConnected && !showForm) && <Button icon="account-plus-outline" mode="contained"
-                                                              onPress={createProfile} buttonColor={"#7DAE32"} style={styles.buttonStyle}>
+                                                              onPress={createProfile} buttonColor={"#7DAE32"}
+                                                              style={styles.buttonStyle}>
                         Créer un compte
                     </Button>}
 
@@ -183,6 +198,28 @@ export default function ProfileScreen() {
         setTitleText("Connexion");
         setCreatingUser(false);
         setShowForm(true);
+    }
+
+    function setAsAdmin() {
+        if(!userConnected) setIsAdmin(false);
+        else {
+            fetch(SERVER_ADDRESS + '/verifyAdmin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    idUser: idUser
+                }),
+            }).then(response => {
+                if (!response.ok) {
+                    setIsAdmin(false);
+                    AdaptativeAlert('Erreur du serveur');
+                } else {
+                    setIsAdmin(response[0].Admin === 1);
+                }
+            })
+        }
     }
 
     function submitLoginForm() {

@@ -119,7 +119,7 @@ export default function ProfileScreen() {
                             </Button>
                         </View>}
                     {isAdmin &&
-                        <Button icon="security" mode="contained" onPress={() => setAdminPanelVisibility(true)} buttonColor={"#7DAE32"}
+                        <Button icon="security" mode="contained" onPress={() => setAdminPanelVisibility(true)} buttonColor={"#A68A64"}
                                 style={styles.buttonStyle}>
                             Panneau d'administration
                         </Button>

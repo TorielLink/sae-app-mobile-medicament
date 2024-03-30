@@ -9,9 +9,6 @@ export default function Home() {
             <View style={{zIndex: 5}}>
                 <GestionCIS/>
             </View>
-            <Calendar
-                style={stylesHome.calendar}
-            />
         </View>
     );
 }
@@ -21,11 +18,5 @@ const stylesHome = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    calendar: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        margin: 10,
     },
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Portal, Searchbar, List } from 'react-native-paper';
-import { StyleSheet, View } from "react-native";
+import {Platform, StyleSheet, View} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import DataMatrixScanner from "./DataMatrixScanner";
@@ -132,15 +132,17 @@ export default function GestionCIS() {
                     iconColor={"#7DAE32"}
                     style={styles.searchbar}
                 />
-                <Button
-                    icon="data-matrix-scan"
-                    mode="contained"
-                    onPress={() => setScanVisibility(true)}
-                    buttonColor={"#FFF"}
-                    textColor={"black"}
-                    compact={true}
-                    contentStyle={styles.buttonIcon}
-                >Scan</Button>
+                {Platform.OS !== 'web' && (
+                    <Button
+                        icon="data-matrix-scan"
+                        mode="contained"
+                        onPress={() => setScanVisibility(true)}
+                        buttonColor={"#FFF"}
+                        textColor={"black"}
+                        compact={true}
+                        contentStyle={styles.buttonIcon}
+                    >Scan</Button>
+                )}
             </View>
             <Portal>
                 <Modal visible={scanVisible}
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
         top: 50,
         backgroundColor: '#E4F2CF',
         marginTop: 10,
-        width: '80%',
+        width: Platform.OS === 'web' ? '100%' : '80%',
         borderRadius: 10,
     },
     containerStyle: {

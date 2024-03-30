@@ -9,7 +9,7 @@ import ModalAlert from '../components/ModalAlert';
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
 
-export default function ProfileScreen({ setIsAdmin }) {
+export default function ProfileScreen() {
     const contactUs = () => {
         Linking.openURL('mailto:service.technique@AppMobile.com?subject=Contact via application'); //TODO
     };
@@ -184,7 +184,7 @@ export default function ProfileScreen({ setIsAdmin }) {
         setFirstName('');
         setLastName('');
         setPasswordUser('');
-        setIsAdmin(false);
+        //setIsAdmin(false);
         setUserConnected(false);
         setTitleText("Compte utilisateur");
     }
@@ -201,7 +201,7 @@ export default function ProfileScreen({ setIsAdmin }) {
         setShowForm(true);
     }
 
-    function setAsAdmin() {
+    /*function setAsAdmin() {
         if(!userConnected) setIsAdmin(false);
         else {
             fetch(SERVER_ADDRESS + '/verifyAdmin', {
@@ -221,7 +221,7 @@ export default function ProfileScreen({ setIsAdmin }) {
                 }
             })
         }
-    }
+    }*/
 
     function submitLoginForm() {
         if(!sizeFormInputOK()){
@@ -252,7 +252,7 @@ export default function ProfileScreen({ setIsAdmin }) {
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
                 setIdUser(data[0].Id_Utilisateur);
-                setAsAdmin();
+                //setAsAdmin();
                 setUserConnected(true);
             }
             setShowForm(false);

@@ -6,6 +6,7 @@ import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
 import AdminPanel from "../components/AdminPanel";
+import ChangeProfileInfos from "../components/ChangeProfileInfos";
 
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
@@ -133,21 +134,7 @@ export default function ProfileScreen() {
                 <SelectionDrugs hideMe={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}
             {userConnected && changingProfileInfos &&
-                <ModalAlert
-                    title="Modifier mes informations"
-                    message="Entrez vos nouvelles informations :"
-                    buttons={[
-                        {
-                            text: 'Annuler',
-                            style: 'cancel',
-                            onPress: () => setChangingProfileInfos(false)
-                        },
-                        {
-                            text: 'Valider',
-                            onPress: (newInfo) => updateProfile(newInfo),
-                        },
-                    ]}
-                />}
+                <ChangeProfileInfos hideMe={() => setChangingProfileInfos(false)} idUser={idUser} />}
             {userConnected && deletingProfile &&
                 <ModalAlert
                     title="Suppression de compte"
@@ -166,29 +153,6 @@ export default function ProfileScreen() {
                 />}
         </View>
     );
-
-    function updateProfile(newInfo) {
-        setChangingProfileInfos(false);
-        fetch(SERVER_ADDRESS + '/updateProfile', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                newInfo: newInfo,
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur du serveur');
-                } else {
-                    AdaptativeAlert(`Informations mises à jour : ${newInfo}`);
-                }
-            })
-            .catch(error => {
-                AdaptativeAlert(`Erreur lors de la mise à jour du profil : ${error}`);
-            });
-    }
 
     function disconnectProfile() {
         setIdUser(null);

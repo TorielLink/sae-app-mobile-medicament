@@ -152,8 +152,11 @@ function makeTheSignalement(res, codeCIS) {
             res.status(500).json(error);
         } else {
             if (result.length > 0) {
-                let sqlUpdate = 'UPDATE Signalements SET Nb_Signalement = Nb_Signalement + 1 WHERE Code_CIS = ?';
-                let valuesUpdate = [codeCIS];
+                let sqlUpdate = 'UPDATE Signalements SET Nb_Signalement = Nb_Signalement + 1, Date_Signalement = ? WHERE Code_CIS = ?';
+                let valuesUpdate = [
+                    new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    codeCIS
+                ];
 
                 executeQuery(sqlUpdate, valuesUpdate, function (error, result) {
                     if (error) {
@@ -246,43 +249,33 @@ app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
  * Update user's information
  */
 app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
-    //TODO ne fonctionne pas
-    //piste : tu selectionne en fonction de firstName sauf que dans le corps de la requete c'est le meme qui est le nouveau
-    const { firstName, lastName, password } = req.body;
-    let idUser = -1;
+    const { idUser, firstName, lastName, password } = req.body;
 
     let updateFields = [];
     if (firstName) {
-        updateFields.push("`firstname` = '" + firstName + "'");
+        updateFields.push("`Prenom` = '" + firstName + "'");
     }
     if (lastName) {
-        updateFields.push("`lastname` = '" + lastName + "'");
+        updateFields.push("`Nom_Famille` = '" + lastName + "'");
     }
     if (password) {
-        updateFields.push("`password` = '" + password + "'");
+        updateFields.push("`Mot_De_Passe` = '" + password + "'");
     }
 
     if (updateFields.length > 0) {
         let updateFieldsString = updateFields.join(", ");
-        sql = "UPDATE Utilisateurs SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
-        getIdUser(req.body.firstName, req.body.lastName, function (error, result) {
-            if (error) {
-                res.status(500).json(error);
-            } else {
-                idUser = result[0].Id_Utilisateur;
-                let values = [
-                    idUser
-                ];
-                executeQuery(sql, values, function (error, result) {
-                    if (error) {
-                        console.error(error);
-                        res.status(500).json(error);
-                    } else {
-                        res.status(200).json('User information updated successfully');
-                    }
-                });
-            }
-        });
+        let sql = "UPDATE Utilisateurs SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
+            let values = [
+                idUser
+            ];
+            executeQuery(sql, values, function (error, result) {
+                if (error) {
+                    console.error(error);
+                    res.status(500).json(error);
+                } else {
+                    res.status(200).json('User information updated successfully');
+                }
+            });
     } else {
         res.status(400).json('No fields to update');
     }

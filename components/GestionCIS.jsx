@@ -68,6 +68,7 @@ export default function GestionCIS() {
         });
     }
     const handleSuggestionPress = (suggestion) => {
+        //TODO fait planter toute l'appli
         setSearchQuery(suggestion);
         setSuggestions([]);
         saveInputLocally(suggestion);

@@ -13,7 +13,7 @@ const noDataOrdonances = [
     },
 ];
 
-export default function SelectionDrugs({hide, getIdUser}) {
+export default function SelectionDrugs({hideMe, getIdUser}) {
     const [page, setPage] = useState(0);
     const [numberOfItemsPerPageList] = useState([2, 3, 4]);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
@@ -42,7 +42,7 @@ export default function SelectionDrugs({hide, getIdUser}) {
                 visible={true}
                 contentContainerStyle={styles.modalContainerStyle}
                 onDismiss={() => {
-                    hide();
+                    hideMe();
                 }}>
                 <View style={styles.modalContent}>
                     <Text>Modification de mes médicaments</Text>

@@ -154,7 +154,7 @@ app.post(`${HOME_REP_SERVER}/removeDrug`, function (req, res) {
  */
 app.post(`${HOME_REP_SERVER}/login`, function (req, res){
     console.log('User "' + req.body.firstName + ' ' + req.body.lastName + '" is trying to login');
-    let sql = 'SELECT Id_Utilisateur, Id_Utilisateur, Prenom, Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
+    let sql = 'SELECT Id_Utilisateur, Prenom, Nom_Famille, Admin FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
     let values = [
         req.body.firstName,
         req.body.lastName,
@@ -314,24 +314,6 @@ app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
                     res.send("OK");
                 }
             })
-        }
-    });
-});
-
-/**
- * test is user is admin
- */
-app.post(`${HOME_REP_SERVER}/verifyAdmin`, function (req, res){
-    let sql = 'SELECT Admin FROM Utilisateurs WHERE Id_Utilisateur = ?';
-    let values = [
-        req.body.idUser
-    ];
-    executeQuery(sql, values, function(error, result){
-        if(error){
-            res.status(500).json(error);
-        }
-        else {
-            res.json(result);
         }
     });
 });

@@ -5,6 +5,7 @@ import SelectionDrugs from "../components/SelectionDrugs";
 import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
+import AdminPanel from "../components/AdminPanel";
 
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
@@ -24,9 +25,11 @@ export default function ProfileScreen() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [passwordUser, setPasswordUser] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [showForm, setShowForm] = useState(false);
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
+    const [showAdminPanel, setAdminPanelVisibility] = useState(false);
 
     return (
         <View>
@@ -115,11 +118,19 @@ export default function ProfileScreen() {
                                 Supprimer mon compte
                             </Button>
                         </View>}
+                    {isAdmin &&
+                        <Button icon="security" mode="contained" onPress={() => setAdminPanelVisibility(true)} buttonColor={"#7DAE32"}
+                                style={styles.buttonStyle}>
+                            Panneau d'administration
+                        </Button>
+                    }
+                    {isAdmin && showAdminPanel &&
+                        <AdminPanel hideMe={() => {setAdminPanelVisibility(false);}}/>}
 
                 </View>
             </View>
             {userConnected && showDrugsModif &&
-                <SelectionDrugs hide={() => {setDrugsModifVisibility(false);}} getIdUser={
+                <SelectionDrugs hideMe={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}
             {userConnected && changingProfileInfos &&
                 <ModalAlert
@@ -184,7 +195,7 @@ export default function ProfileScreen() {
         setFirstName('');
         setLastName('');
         setPasswordUser('');
-        //setIsAdmin(false);
+        setIsAdmin(false);
         setUserConnected(false);
         setTitleText("Compte utilisateur");
     }
@@ -200,28 +211,6 @@ export default function ProfileScreen() {
         setCreatingUser(false);
         setShowForm(true);
     }
-
-    /*function setAsAdmin() {
-        if(!userConnected) setIsAdmin(false);
-        else {
-            fetch(SERVER_ADDRESS + '/verifyAdmin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    idUser: idUser
-                }),
-            }).then(response => {
-                if (!response.ok) {
-                    setIsAdmin(false);
-                    AdaptativeAlert('Erreur du serveur');
-                } else {
-                    setIsAdmin(response[0].Admin === 1);
-                }
-            })
-        }
-    }*/
 
     function submitLoginForm() {
         if(!sizeFormInputOK()){
@@ -252,7 +241,7 @@ export default function ProfileScreen() {
             else {
                 setTitleText("Bienvenue " + firstName + ' ' + lastName);
                 setIdUser(data[0].Id_Utilisateur);
-                //setAsAdmin();
+                setIsAdmin(data[0].Admin === 1)
                 setUserConnected(true);
             }
             setShowForm(false);

@@ -1,18 +1,23 @@
-import {View} from "react-native";
-import {Text} from "react-native-paper";
+import {StyleSheet, View} from "react-native";
+import {Modal, Portal, Text} from "react-native-paper";
 import React from "react";
-import { BarChart } from 'react-native-chart-kit';
 
 const data = [
-    //TODO: fill with our data
+    //TODO: get data from server
 ];
-export default function StatsCharts() {
+export default function AdminPanel({hideMe}) {
     return (
-        <>
-            <View>
-                <Text>EN COURS DE CONSTRUCTION</Text>
-            </View>
-            {/*<View>
+        <Portal>
+            <Modal
+                visible={true}
+                contentContainerStyle={styles.modalContainerStyle}
+                onDismiss={() => {
+                    hideMe();
+                }}>
+                <View style={styles.modalContent}>
+                    <Text>EN COURS DE CONSTRUCTION</Text>
+                </View>
+                {/*<View>
                 <BarChart
                     data={{
                         labels: ['January', 'February', 'March'],
@@ -46,6 +51,21 @@ export default function StatsCharts() {
                     }}
                  yAxisSuffix=" unité"/>
             </View>*/}
-        </>
+            </Modal>
+        </Portal>
     );
 };
+
+const styles = StyleSheet.create({
+    modalContainerStyle: {
+        alignItems: 'center',
+        backgroundColor: 'grey',
+        padding: 20,
+        borderRadius: 10
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+    },
+});

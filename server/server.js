@@ -77,8 +77,10 @@ app.get(`${HOME_REP_SERVER}/`, function (req, res){
  * Search for a drug by CIS code
  */
 app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
-    let sql = 'SELECT Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? LIMIT 20';
+    let sql = 'SELECT M.Code_CIS, M.Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? OR C.Code_CIP7 LIKE ? OR C.Code_CIP13 LIKE ? LIMIT 20';
     let values = [
+        `${req.body.CIS}%`,
+        `${req.body.CIS}%`,
         `${req.body.CIS}%`
     ];
     executeQuery(sql, values, function (error, result){
@@ -109,29 +111,75 @@ app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
     });
 });
 
-/*
- * Mettre à jour le statut Bdm du médicament
-
-app.post(`${HOME_REP_SERVER}/updateMedStatus`, function (req, res) {
-    let sql = 'UPDATE Medicaments SET StatutBdm = ? WHERE Code_CIS = ?';
+/**
+ * Add a signalement
+ */
+app.post(`${HOME_REP_SERVER}/addSignalement`, function (req, res){
+    let sqlCIP = 'SELECT C.Code_CIS FROM Correspondances C WHERE C.Code_CIS = ? OR C.Code_CIP7 = ? OR C.Code_CIP13 = ?';
     let values = [
-        req.body.newStatus,
-        req.body.CIS
+        req.body.CIP,
+        req.body.CIP,
+        req.body.CIP
     ];
-    executeQuery(sql, values, function (error, result){
+    executeQuery(sqlCIP, values, function (error, result){
         if(error){
             res.status(500).json(error);
         }
         else {
-            res.send('Statut du médicament mis à jour avec succès');
+            if(result.length > 0){
+                makeTheSignalement(res, result[0].Code_CIS)
+            }
+            else {
+                res.status(500).json("noData");
+            }
         }
     });
 });
-*/
-
 
 /**
- * Remove drug from user's Ordonance table
+ * really make the signalement
+ */
+function makeTheSignalement(res, codeCIS) {
+    let sqlCheck = 'SELECT S.Code_CIS FROM Signalements S WHERE S.Code_CIS = ?';
+    let valuesCheck = [
+        codeCIS,
+        codeCIS,
+        codeCIS
+    ];
+
+    executeQuery(sqlCheck, valuesCheck, function (error, result) {
+        if (error) {
+            res.status(500).json(error);
+        } else {
+            if (result.length > 0) {
+                let sqlUpdate = 'UPDATE Signalements SET Nb_Signalement = Nb_Signalement + 1 WHERE Code_CIS = ?';
+                let valuesUpdate = [codeCIS];
+
+                executeQuery(sqlUpdate, valuesUpdate, function (error, result) {
+                    if (error) {
+                        res.status(500).json(error);
+                    } else {
+                        res.json({ message: 'Médicament signalé avec succès' });
+                    }
+                });
+            } else {
+                let sqlInsert = 'INSERT INTO Signalements (Code_CIS) VALUES (?)';
+                let valuesInsert = [codeCIS];
+
+                executeQuery(sqlInsert, valuesInsert, function (error, result) {
+                    if (error) {
+                        res.status(500).json(error);
+                    } else {
+                        res.json({ message: 'Médicament signalé avec succès' });
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Remove drug from user's Ordonnance table
  */
 app.post(`${HOME_REP_SERVER}/removeDrug`, function (req, res) {
     let sql = 'DELETE FROM Ordonnance WHERE Id_Utilisateur = ? AND Code_CIS = ?';

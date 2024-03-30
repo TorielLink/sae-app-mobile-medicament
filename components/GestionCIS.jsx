@@ -67,38 +67,33 @@ export default function GestionCIS() {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')' + error);
         });
     }
-    const handleSuggestionPress = (suggestion) => {
-        //TODO fait planter toute l'appli
-        setSearchQuery(suggestion);
+    function handleSuggestionPress(codeCIS) {
+        setSearchQuery(codeCIS);
         setSuggestions([]);
-        saveInputLocally(suggestion);
-        saveCIPToDataBase(suggestion);
-    };
+        saveInputLocally(codeCIS);
+        saveCIPToDataBase(codeCIS);
+    }
 
     function saveCIPToDataBase(CIP) {
-        //TODO a faire
-        AdaptativeAlert("CIP " + CIP + " SAVED TO BD")
-        /*
-        fetch(SERVER_ADDRESS + '/prescription', {
+        fetch(SERVER_ADDRESS + '/addSignalement', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                CIP: CIP,
-                newStatus: true,
-                quantity: 1
+                CIP: CIP
             }),
         }).then(response => {
             if (!response.ok) {
                 AdaptativeAlert('Erreur lors du signalement du médicament')
             } else {
                 AdaptativeAlert('Médicament signalé avec succès');
+                setSearchQuery('');
+                AsyncStorage.setItem('userInput', '');
             }
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
-        */
     }
 
     function saveInputLocally(input) {
@@ -127,7 +122,7 @@ export default function GestionCIS() {
             </View>
             <View style={styles.searchContainer}>
                 <Searchbar
-                    placeholder="Entrez un CIP ou un CIS"
+                    placeholder="Entrez un code"
                     onChangeText={(query) => {
                         setSearchQuery(query);
                         searchDrug(query);
@@ -160,7 +155,7 @@ export default function GestionCIS() {
                     <List.Item
                         key={index}
                         title={item.Denomination}
-                        onPress={() => handleSuggestionPress(item.CIS)}
+                        onPress={() => handleSuggestionPress(item.Code_CIS)}
                     />
                 ))}
             </List.Section>
@@ -185,13 +180,9 @@ const styles = StyleSheet.create({
     suggestionList: {
         position: 'absolute',
         top: 50,
-        left: 0,
-        right: 0,
         backgroundColor: '#E4F2CF',
         marginTop: 10,
-        maxHeight: 200,
         width: '80%',
-        alignSelf: 'left',
         borderRadius: 10,
     },
     containerStyle: {

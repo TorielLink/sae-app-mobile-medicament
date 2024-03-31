@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import GestionCIS from '../components/GestionCIS';
-import {Calendar} from "react-native-calendars";
 
 export default function Home() {
     return (

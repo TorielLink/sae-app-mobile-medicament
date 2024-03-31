@@ -1,14 +1,17 @@
-import { useState    } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { Switch } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
-import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
+import { Camera } from 'expo-camera';
+import GDPRConsent from '../components/RGPDConsent';
 
 export default function SettingsScreen() {
-    const [notificationEnabled, setNotificationEnabled] = useState(false);//TODO
-    const [localisationEnabled, setLocalisationEnabled] = useState(false);//TODO
-    const [cameraAccess, setCameraAccess] = useState(false);//TODO + ca lance des warnings sur telephone
+    const [notificationEnabled, setNotificationEnabled] = useState(false);
+    const [localisationEnabled, setLocalisationEnabled] = useState(false);
+    const [cameraAccess, setCameraAccess] = useState(false);
+    const [showConsent, setShowConsent] = useState(true);
+    const [consentAccepted, setConsentAccepted] = useState(false);
 
     const toggleNotificationSwitch = async () => {
         if (notificationEnabled) {
@@ -49,21 +52,41 @@ export default function SettingsScreen() {
         }
     };
 
+    const handleAccept = () => {
+        setConsentAccepted(true);
+        setShowConsent(false);
+    };
+
+    const handleDecline = () => {
+        setShowConsent(false);
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.setting}>
-                <Text>Notifications</Text>
-                <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
-            </View>
-            <View style={styles.setting}>
-                <Text>Autoriser la localisation</Text>
-                <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch} color={"#7DAE32"} />
-            </View>
-            <View style={styles.setting}>
-                <Text>Autoriser la caméra</Text>
-                <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
-            </View>
-            {cameraAccess && <Camera style={styles.camera} />}
+            {showConsent && (
+                <GDPRConsent
+                    onAccept={handleAccept}
+                    onDecline={handleDecline}
+                />
+            )}
+            {!showConsent && (
+                <View>
+                    <View style={styles.setting}>
+                        <Text>Notifications</Text>
+                        <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
+                    </View>
+                    <View style={styles.setting}>
+                        <Text>Autoriser la localisation</Text>
+                        <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch} color={"#7DAE32"} />
+                    </View>
+                    <View style={styles.setting}>
+                        <Text>Autoriser la caméra</Text>
+                        <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
+                    </View>
+                    {cameraAccess && <Camera style={styles.camera} />}
+                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> : <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
+                </View>
+            )}
         </View>
     );
 }

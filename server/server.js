@@ -142,8 +142,6 @@ app.post(`${HOME_REP_SERVER}/addSignalement`, function (req, res){
 function makeTheSignalement(res, codeCIS) {
     let sqlCheck = 'SELECT S.Code_CIS FROM Signalements S WHERE S.Code_CIS = ?';
     let valuesCheck = [
-        codeCIS,
-        codeCIS,
         codeCIS
     ];
 
@@ -327,34 +325,35 @@ app.post(`${HOME_REP_SERVER}/delete`, function (req, res){
  * Add a drug to the user's Ordonance table
  */
 app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
-    //TODO a faire
-    let sql = 'INSERT INTO Ordonnance(ID_UTILISATEUR, CODE_CIS, QUANTITÉ) VALUES (?, ?, ?)';
-    let idUser = -1;
-    let quantity = req.body.quantityMedoc;
-    if(quantity < 0){
-        res.send("Error : negative quantity");
-        return;
-    }
-    getIdUser(req.body.firstName, req.body.lastName, function (error, result){
+    let sqlCIP = 'SELECT C.Code_CIS FROM Correspondances C WHERE C.Code_CIS = ? OR C.Code_CIP7 = ? OR C.Code_CIP13 = ?';
+    let values = [
+        req.body.CIP,
+        req.body.CIP,
+        req.body.CIP
+    ];
+    executeQuery(sqlCIP, values, function (error, result){
         if(error){
-            console.error(error);
-            res.status(500).json(error);
+            res.send("ERROR");
         }
         else {
-            idUser = result[0].Id_Utilisateur;
-            let values = [
-                idUser,
-                req.body.idMedoc,
-                quantity
-            ];
-            executeQuery(sql, values, function(error, result){
-                if(error){
-                    res.status(500).json(error);
-                }
-                else {
-                    res.send("OK");
-                }
-            })
+            if(result.length > 0){
+                let sqlCIP = 'INSERT INTO Ordonnance (Id_Utilisateur, Code_CIS, Quantité) VALUES (?, ?, 1)';
+                let values = [
+                    req.body.idUser,
+                    result[0].Code_CIS
+                ];
+                executeQuery(sqlCIP, values, function (error, result){
+                    if(error){
+                        res.send('ALREADY ADDED')
+                    }
+                    else {
+                        res.send("OK");
+                    }
+                });
+            }
+            else {
+                res.send("ERROR");
+            }
         }
     });
 });

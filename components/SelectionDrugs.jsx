@@ -79,7 +79,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
                     </DataTable>
                     <Button
                         onPress={() => {
-                            hide();
+                            hideMe();
                         }}>
                         <Text>Annuler</Text>
                     </Button>
@@ -145,7 +145,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
             }
             else {
                 AdaptativeAlert('Médicament supprimé');
-                hide();
+                hideMe();
             }
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');

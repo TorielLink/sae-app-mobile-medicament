@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Portal, Searchbar, List } from 'react-native-paper';
+import { Button, Modal, Portal, Searchbar, List, Text } from 'react-native-paper';
 import {Platform, StyleSheet, View} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import DataMatrixScanner from "./DataMatrixScanner";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {SERVER_ADDRESS} from "../constants/constants";
+import {useUser} from "../contexts/UserContext";
 
 export default function GestionCIS() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +14,8 @@ export default function GestionCIS() {
     const [suggestions, setSuggestions] = useState([]);
     const [offlineQueue, setOfflineQueue] = useState([]);
     const [isConnected, setIsConnected] = useState(true);
+
+    const { updateUser } = useUser();
 
     useEffect(() => {
         if (searchQuery.length > 0) {
@@ -94,6 +97,7 @@ export default function GestionCIS() {
         }).catch(error => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
+        updateUser({ cip: CIP });
     }
 
     function saveInputLocally(input) {
@@ -174,7 +178,7 @@ const styles = StyleSheet.create({
     },
     searchbar: {
         backgroundColor: '#E4F2CF',
-        maxWidth: '80%'
+        maxWidth: Platform.OS === 'web' ? '100%' : '80%'
     },
     buttonIcon: {
         height: 56,

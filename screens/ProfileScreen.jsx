@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Linking} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Linking, StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import {SERVER_ADDRESS} from "../constants/constants";
@@ -7,6 +7,7 @@ import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
 import AdminPanel from "../components/AdminPanel";
 import ChangeProfileInfos from "../components/ChangeProfileInfos";
+import {useUser} from "../contexts/UserContext";
 
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
@@ -31,6 +32,18 @@ export default function ProfileScreen() {
     const [showForm, setShowForm] = useState(false);
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
     const [showAdminPanel, setAdminPanelVisibility] = useState(false);
+
+    const { user } = useUser();
+
+    useEffect(() => {
+        const getUserID = async () => {
+            if (user.cip) {
+                addCIPToOrdonnance(user.cip, idUser);
+            }
+        };
+        getUserID();
+    }, []);
+
 
     return (
         <View>
@@ -294,6 +307,33 @@ export default function ProfileScreen() {
         })
             .catch(error => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
+            });
+    }
+    function addCIPToOrdonnance(cip, userID) {
+        //TODO a finir (je ne sais pas pourquoi ca marche pas)
+        fetch(SERVER_ADDRESS + '/prescription', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                CIP: cip,
+                idUser: userID
+            }),
+        }).then(response => {
+            if (response.ok) {
+                return response;
+            }
+        }).then(data => {
+            if(data.text() === "ALREADY ADDED"){
+                //deja ajouté
+            }
+            else {
+                //ajout OK
+            }
+        })
+            .catch(error => {
+                //pas de reseau
             });
     }
 };

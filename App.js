@@ -6,6 +6,7 @@ import {DefaultTheme, PaperProvider} from "react-native-paper";
 import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import {UserProvider} from "./contexts/UserContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,31 +20,33 @@ const theme = {
 export default function App() {
     return (
             <PaperProvider theme={theme}>
-                <NavigationContainer>
-                    <Tab.Navigator initialRouteName="Home">
-                        <Tab.Screen
-                            name="Settings"
-                            component={SettingsScreen}
-                            options={{
-                                tabBarIcon: makeIconRender("cog"),
-                                tabBarActiveTintColor: "#7DAE32" }}
-                        />
-                        <Tab.Screen
-                            name="Home"
-                            component={HomeScreen}
-                            options={{
-                                tabBarIcon: makeIconRender("home"),
-                                tabBarActiveTintColor: "#7DAE32"
-                        }}/>
-                        <Tab.Screen
-                            name="Profile"
-                            component={ProfileScreen}
-                            options={{
-                                tabBarIcon: makeIconRender("baby-face-outline"),
-                                tabBarActiveTintColor: "#7DAE32"
-                        }}/>
-                    </Tab.Navigator>
-                </NavigationContainer>
+                <UserProvider>
+                    <NavigationContainer>
+                        <Tab.Navigator initialRouteName="Home">
+                            <Tab.Screen
+                                name="Settings"
+                                component={SettingsScreen}
+                                options={{
+                                    tabBarIcon: makeIconRender("cog"),
+                                    tabBarActiveTintColor: "#7DAE32"
+                                }}/>
+                            <Tab.Screen
+                                name="Home"
+                                component={HomeScreen}
+                                options={{
+                                    tabBarIcon: makeIconRender("home"),
+                                    tabBarActiveTintColor: "#7DAE32"
+                                }}/>
+                            <Tab.Screen
+                                name="Profile"
+                                component={ProfileScreen}
+                                options={{
+                                    tabBarIcon: makeIconRender("baby-face-outline"),
+                                    tabBarActiveTintColor: "#7DAE32"
+                                }}/>
+                        </Tab.Navigator>
+                    </NavigationContainer>
+                </UserProvider>
             </PaperProvider>
     );
 }

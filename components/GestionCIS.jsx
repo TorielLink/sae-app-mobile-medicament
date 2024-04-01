@@ -6,7 +6,7 @@ import NetInfo from '@react-native-community/netinfo';
 import DataMatrixScanner from "./DataMatrixScanner";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {SERVER_ADDRESS} from "../constants/constants";
-import {useUser} from "../contexts/UserContext";
+import {useUserContext} from "../contexts/UserContext";
 
 export default function GestionCIS() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,7 +15,7 @@ export default function GestionCIS() {
     const [offlineQueue, setOfflineQueue] = useState([]);
     const [isConnected, setIsConnected] = useState(true);
 
-    const { updateUser } = useUser();
+    const { handleCIPEntered } = useUserContext();
 
     useEffect(() => {
         if (searchQuery.length > 0) {
@@ -33,7 +33,7 @@ export default function GestionCIS() {
                 }
             })
             .catch(error => {
-                console.error('Erreur lors du chargement de la saisie locale:', error);
+                AdaptativeAlert('Erreur lors du chargement de la saisie locale:', error);
             });
     }, []);
 
@@ -94,10 +94,11 @@ export default function GestionCIS() {
                 setSearchQuery('');
                 AsyncStorage.setItem('userInput', '');
             }
-        }).catch(error => {
+        }).catch(() => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
-        updateUser({ cip: CIP });
+
+        handleCIPEntered(CIP);
     }
 
     function saveInputLocally(input) {

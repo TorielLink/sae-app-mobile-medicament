@@ -9,7 +9,7 @@ export default function AdminPanel({hideMe}) {
     const [statistics, setStatistics] = useState({});
 
     useEffect(() => { //TODO: doesn't work
-        fetch('http://remi-lem.alwaysdata.net/apiPython')
+        fetch('https://remi-lem.alwaysdata.net/apiPython')
             .then(response => {
                 if (!response.ok) {
                     AdaptativeAlert('Erreur du serveur');

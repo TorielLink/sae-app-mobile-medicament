@@ -15,7 +15,7 @@ const noDataOrdonances = [
 
 export default function SelectionDrugs({hideMe, getIdUser}) {
     const [page, setPage] = useState(0);
-    const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+    const [numberOfItemsPerPageList] = useState([10, 20, 30]);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
     const [items, setItems] = useState([
         {
@@ -124,7 +124,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
             }
         }).then(data => {
             updateItems(data);
-        }).catch(error => {
+        }).catch(() => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
     }
@@ -147,7 +147,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
                 AdaptativeAlert('Médicament supprimé');
                 hideMe();
             }
-        }).catch(error => {
+        }).catch(() => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
     }

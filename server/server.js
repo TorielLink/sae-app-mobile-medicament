@@ -77,11 +77,12 @@ app.get(`${HOME_REP_SERVER}/`, function (req, res){
  * Search for a drug by CIS code
  */
 app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
-    let sql = 'SELECT M.Code_CIS, M.Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? OR C.Code_CIP7 LIKE ? OR C.Code_CIP13 LIKE ? LIMIT 20';
+    let sql = 'SELECT M.Code_CIS, M.Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? OR C.Code_CIP7 LIKE ? OR C.Code_CIP13 LIKE ? OR Denomination LIKE ? LIMIT 20';
     let values = [
         `${req.body.CIS}%`,
         `${req.body.CIS}%`,
-        `${req.body.CIS}%`
+        `${req.body.CIS}%`,
+        `%${req.body.CIS}%`
     ];
     executeQuery(sql, values, function (error, result){
         if(error){
@@ -337,17 +338,48 @@ app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
         }
         else {
             if(result.length > 0){
-                let sqlCIP = 'INSERT INTO Ordonnance (Id_Utilisateur, Code_CIS, Quantité) VALUES (?, ?, 1)';
-                let values = [
-                    req.body.idUser,
-                    result[0].Code_CIS
+                let codeCIS = result[0].Code_CIS;
+
+                let sqlCheck = 'SELECT O.Code_CIS FROM Ordonnance O WHERE O.Code_CIS = ? AND O.Id_Utilisateur = ?';
+                let valuesCheck = [
+                    codeCIS,
+                    req.body.idUser
                 ];
-                executeQuery(sqlCIP, values, function (error, result){
-                    if(error){
-                        res.send('ALREADY ADDED')
-                    }
-                    else {
-                        res.send("OK");
+
+                executeQuery(sqlCheck, valuesCheck, function (error, result) {
+                    if (error) {
+                        res.send("ERROR");
+                    } else {
+                        if (result.length > 0) {
+                            let sqlUpdate = 'UPDATE Ordonnance SET Quantité = Quantité + 1 WHERE Id_Utilisateur = ? AND Code_CIS = ?';
+                            let valuesUpdate = [
+                                req.body.idUser,
+                                codeCIS
+                            ];
+
+                            executeQuery(sqlUpdate, valuesUpdate, function (error, result) {
+                                if(error){
+                                    res.send('ERROR')
+                                }
+                                else {
+                                    res.send("OK");
+                                }
+                            });
+                        } else {
+                            let sqlCIP = 'INSERT INTO Ordonnance (Id_Utilisateur, Code_CIS, Quantité) VALUES (?, ?, 1)';
+                            let values = [
+                                req.body.idUser,
+                                codeCIS
+                            ];
+                            executeQuery(sqlCIP, values, function (error, result){
+                                if(error){
+                                    res.send('ERROR')
+                                }
+                                else {
+                                    res.send("OK");
+                                }
+                            });
+                        }
                     }
                 });
             }

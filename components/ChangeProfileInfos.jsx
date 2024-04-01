@@ -1,15 +1,34 @@
 import React, { useState } from "react";
 import { Modal, Portal, TextInput, Button } from "react-native-paper";
 import { View } from "react-native";
-import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert";
+
+import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
+
 
 export default function ChangeProfileInfos({ hideMe, idUser }) {
     const [newFirstName, setNewFirstName] = useState("");
     const [newLastName, setNewLastName] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
+    function sizeChangeProfileInfosFormOK() {
+        if(newFirstName.length < MIN_LENGTH_NAME_USER && newFirstName.length !== 0){
+            return false;
+        }
+        if(newLastName.length < MIN_LENGTH_NAME_USER && newLastName.length !== 0){
+            return false;
+        }
+        if(newPassword.length < MIN_LENGTH_PASSWORD_USER && newPassword.length !== 0){
+            return false;
+        }
+        return true;
+    }
+
     const handleConfirm = () => {
+        if(!sizeChangeProfileInfosFormOK()){
+            AdaptativeAlert("Champs trop courts. (MDP > 5 caractères)");
+            return;
+        }
         fetch(SERVER_ADDRESS + '/updateProfile', {
             method: 'POST',
             headers: {

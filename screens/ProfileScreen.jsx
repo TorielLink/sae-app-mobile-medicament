@@ -1,16 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Linking, StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
-import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
 import AdminPanel from "../components/AdminPanel";
 import ChangeProfileInfos from "../components/ChangeProfileInfos";
-import {useUser} from "../contexts/UserContext";
 
-const MIN_LENGTH_PASSWORD_USER = 5;
-const MIN_LENGTH_NAME_USER = 1;
+import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
+import {useUserContext} from "../contexts/UserContext";
 
 export default function ProfileScreen() {
     const contactUs = () => {
@@ -33,17 +31,7 @@ export default function ProfileScreen() {
     const [showDrugsModif, setDrugsModifVisibility] = useState(false);
     const [showAdminPanel, setAdminPanelVisibility] = useState(false);
 
-    const { user } = useUser();
-
-    useEffect(() => {
-        const getUserID = async () => {
-            if (user.cip) {
-                addCIPToOrdonnance(user.cip, idUser);
-            }
-        };
-        getUserID();
-    }, []);
-
+    const { storeUserId } = useUserContext();
 
     return (
         <View>
@@ -175,6 +163,7 @@ export default function ProfileScreen() {
         setIsAdmin(false);
         setUserConnected(false);
         setTitleText("Compte utilisateur");
+        storeUserId(null);
     }
 
     function createProfile() {
@@ -220,10 +209,11 @@ export default function ProfileScreen() {
                 setIdUser(data[0].Id_Utilisateur);
                 setIsAdmin(data[0].Admin === 1)
                 setUserConnected(true);
+                storeUserId(data[0].Id_Utilisateur);
             }
             setShowForm(false);
         })
-            .catch(error => {
+            .catch(() => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
         setPasswordUser('');
@@ -251,12 +241,12 @@ export default function ProfileScreen() {
             else {
                 return response.json();
             }
-        }).then(data => {
+        }).then(() => {
             AdaptativeAlert('Compte crée avec succès')
             setTitleText("Compte utilisateur");
             setShowForm(false);
         })
-            .catch(error => {
+            .catch(() => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
         setPasswordUser('');
@@ -307,33 +297,6 @@ export default function ProfileScreen() {
         })
             .catch(error => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ', erreur : ' + error + ')');
-            });
-    }
-    function addCIPToOrdonnance(cip, userID) {
-        //TODO a finir (je ne sais pas pourquoi ca marche pas)
-        fetch(SERVER_ADDRESS + '/prescription', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                CIP: cip,
-                idUser: userID
-            }),
-        }).then(response => {
-            if (response.ok) {
-                return response;
-            }
-        }).then(data => {
-            if(data.text() === "ALREADY ADDED"){
-                //deja ajouté
-            }
-            else {
-                //ajout OK
-            }
-        })
-            .catch(error => {
-                //pas de reseau
             });
     }
 };

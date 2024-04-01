@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { SERVER_ADDRESS } from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {List} from "react-native-paper";
 
 export default function LatestSignalementsList({handleSignaledCIPPress}) {
-    //TODO on click
     const [signalements, setSignalements] = useState([]);
 
     useEffect(() => {
@@ -46,7 +45,6 @@ export default function LatestSignalementsList({handleSignaledCIPPress}) {
                         description={item.Code_CIS}
                         onPress={() => {
                             handleSignaledCIPPress(item.Code_CIS)
-                            fetchSignalements()
                         }}
                     />
                 ))}

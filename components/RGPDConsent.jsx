@@ -15,7 +15,7 @@ const RGPDConsent = ({ onAccept, onDecline }) => {
             </Text>
             <View style={styles.buttonContainer}>
                 <Button onPress={onAccept} buttonColor={"#7DAE32"} mode="contained">Accepter</Button>
-                <Button onPress={onDecline} buttonColor={"#7DAE32"} mode="contained">Refuser</Button>
+                <Button onPress={onDecline} buttonColor={"#BC2C2C"} mode="contained">Refuser</Button>
             </View>
             {privacyPolicy &&
                 <Portal>

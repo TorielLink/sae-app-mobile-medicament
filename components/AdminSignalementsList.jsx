@@ -52,7 +52,7 @@ export default function AdminSignalementsList({hideMe}) {
                         <DataTable.Header>
                             <DataTable.Title>Nom</DataTable.Title>
                             <DataTable.Title numeric>Nombre</DataTable.Title>
-                            <DataTable.Title>Date</DataTable.Title>
+                            <DataTable.Title numeric>Date</DataTable.Title>
                         </DataTable.Header>
 
                         {items.slice(from, to).map((item) => (

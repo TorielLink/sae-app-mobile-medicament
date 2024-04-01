@@ -184,7 +184,9 @@ function makeTheSignalement(res, codeCIS) {
  * Get signalements
  */
 app.post(`${HOME_REP_SERVER}/getSignalements`, function (req, res) {
-    let sql = 'SELECT M.Denomination, M.Code_CIS, S.Date_Signalement, S.Nb_Signalement FROM Signalements S INNER JOIN Medicaments M ON S.Code_CIS = M.Code_CIS';
+    let sql = 'SELECT M.Denomination, M.Code_CIS, S.Date_Signalement, S.Nb_Signalement ' +
+        'FROM Signalements S INNER JOIN Medicaments M ON S.Code_CIS = M.Code_CIS' +
+        'ORDER BY S.Date_Signalement';
     let values = [];
     executeQuery(sql, values, function (error, result){
         if(error){

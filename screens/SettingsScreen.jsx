@@ -77,6 +77,8 @@ export default function SettingsScreen() {
             )}
             {!showConsent && (
                 <View>
+                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> :
+                        <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
                     <TouchableOpacity style={styles.changeConsentButton} onPress={changeConsent}>
                         <Text style={styles.buttonText}>Modifier le consentement RGPD</Text>
                     </TouchableOpacity>
@@ -93,8 +95,6 @@ export default function SettingsScreen() {
                         <Switch value={cameraAccess} onValueChange={toggleCameraSwitch} color={"#7DAE32"} />
                     </View>
                     {cameraAccess && <Camera style={styles.camera} />}
-                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> :
-                        <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
                 </View>
             )}
         </View>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
-        marginBottom: 10,
+        marginBottom: 35,
     },
     buttonText: {
         color: 'white',
@@ -134,6 +134,6 @@ const styles = StyleSheet.create({
     consentText: {
         fontSize: 14,
         color: '#333',
-        marginTop: 10,
+        marginBottom: 10,
     },
 });

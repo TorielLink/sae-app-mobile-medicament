@@ -22,26 +22,26 @@ export default function App() {
             <PaperProvider theme={theme}>
                 <UserProvider>
                     <NavigationContainer>
-                        <Tab.Navigator initialRouteName="Home">
+                        <Tab.Navigator initialRouteName="Accueil">
                             <Tab.Screen
-                                name="Settings"
+                                name="Paramètres"
                                 component={SettingsScreen}
                                 options={{
                                     tabBarIcon: makeIconRender("cog"),
                                     tabBarActiveTintColor: "#7DAE32"
                                 }}/>
                             <Tab.Screen
-                                name="Home"
+                                name="Accueil"
                                 component={HomeScreen}
                                 options={{
                                     tabBarIcon: makeIconRender("home"),
                                     tabBarActiveTintColor: "#7DAE32"
                                 }}/>
                             <Tab.Screen
-                                name="Profile"
+                                name="Profil"
                                 component={ProfileScreen}
                                 options={{
-                                    tabBarIcon: makeIconRender("baby-face-outline"),
+                                    tabBarIcon: makeIconRender("account-circle"),
                                     tabBarActiveTintColor: "#7DAE32"
                                 }}/>
                         </Tab.Navigator>

@@ -37,9 +37,9 @@ export default function ProfileScreen() {
         <View>
             <View style={styles.screen}>
                 <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
-                <View style={{ flexDirection: 'column' }}>
+                <View style={styles.buttonsProfile}>
                     {userConnected &&
-                        <View>
+                        <>
                             <Button
                                 icon="account-edit"
                                 mode="contained"
@@ -56,7 +56,7 @@ export default function ProfileScreen() {
                                 style={styles.buttonStyle}>
                                 Mes médicaments
                             </Button>
-                        </View>}
+                        </>}
 
                     {(!userConnected && !showForm) &&
                         <Button
@@ -76,7 +76,7 @@ export default function ProfileScreen() {
                     </Button>}
 
                     {showForm &&
-                        <View>
+                        <>
                             <TextInput
                                 label="Prénom"
                                 value={firstName}
@@ -102,7 +102,7 @@ export default function ProfileScreen() {
                                     buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
                                 Annuler
                             </Button>
-                        </View>}
+                        </>}
 
                     <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"}
                             style={styles.buttonStyle}>
@@ -110,7 +110,7 @@ export default function ProfileScreen() {
                     </Button>
 
                     {userConnected &&
-                        <View>
+                        <>
                             <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"}
                                     style={styles.buttonStyle}>
                                 Me déconnecter
@@ -119,18 +119,18 @@ export default function ProfileScreen() {
                                     style={styles.buttonStyle}>
                                 Supprimer mon compte
                             </Button>
-                        </View>}
+                        </>}
                     {isAdmin &&
                         <Button icon="security" mode="contained" onPress={() => setAdminPanelVisibility(true)} buttonColor={"#A68A64"}
                                 style={styles.buttonStyle}>
                             Panneau d'administration
                         </Button>
                     }
-                    {isAdmin && showAdminPanel &&
-                        <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>}
-
                 </View>
             </View>
+
+            {isAdmin && showAdminPanel &&
+                <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>}
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hideMe={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}
@@ -303,9 +303,14 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     screen: {
+
+    },
+    buttonsProfile: {
+        flexDirection: 'column',
         alignItems: 'center',
     },
     title: {
+        textAlign: 'center',
         fontSize: 30,
         marginTop: 20,
         marginBottom: 30,

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { SERVER_ADDRESS } from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert";
+import {List} from "react-native-paper";
 
-const LatestSignalementsList = () => {
+export default function LatestSignalementsList({handleSignaledCIPPress}) {
+    //TODO on click
     const [signalements, setSignalements] = useState([]);
 
     useEffect(() => {
@@ -31,27 +33,30 @@ const LatestSignalementsList = () => {
         });
     };
 
-    const renderSignalementItem = ({ item }) => (
-        <View style={styles.item}>
-            <Text>{item.Denomination}</Text>
-            <Text>{item.Code_CIS}</Text>
-        </View>
-    );
-
     return (
-        <View style={styles.container}>
+        <View style={styles.containerStyle}>
             <Text>Derniers médicaments signalés :</Text>
-            <FlatList style={styles.list}
-                data={signalements}
-                renderItem={renderSignalementItem}
-                keyExtractor={(item, index) => index.toString()}
-            />
+            <Text>Cliquez sur un médicament pour le signaler à votre tour</Text>
+            <List.Section style={styles.list}>
+                {signalements.length > 0 && signalements.map((item, index) => (
+                    <List.Item
+                        style={styles.item}
+                        key={index}
+                        title={item.Denomination}
+                        description={item.Code_CIS}
+                        onPress={() => {
+                            handleSignaledCIPPress(item.Code_CIS)
+                            fetchSignalements()
+                        }}
+                    />
+                ))}
+            </List.Section>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    containerStyle: {
         flex: 1,
         padding: 10,
     },
@@ -59,9 +64,7 @@ const styles = StyleSheet.create({
         paddingTop: 25,
     },
     item: {
-        backgroundColor: '#E4F2CF',
+        backgroundColor: '#BCFF58',
         padding: 15,
     },
 });
-
-export default LatestSignalementsList;

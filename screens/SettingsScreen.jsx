@@ -94,7 +94,6 @@ export default function SettingsScreen() {
                         <Text>Autoriser la caméra</Text>
                         <Switch value={cameraAccess} onValueChange={toggleCameraSwitch} color={"#7DAE32"} />
                     </View>
-                    {cameraAccess && <Camera style={styles.camera} />}
                 </View>
             )}
         </View>
@@ -109,15 +108,9 @@ const styles = StyleSheet.create({
     },
     setting: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
         width: '80%',
         marginBottom: 20,
-    },
-    camera: {
-        width: '100%',
-        height: 300,
-        marginTop: 20,
     },
     changeConsentButton: {
         backgroundColor: '#7DAE32',

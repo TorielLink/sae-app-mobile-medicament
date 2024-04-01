@@ -4,7 +4,6 @@ import {StyleSheet, View} from "react-native";
 import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
-const MAX_CHAR = 20;
 const noDataOrdonnances = [
     {
         key: 0,
@@ -55,7 +54,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
 
                         {items.slice(from, to).map((item) => (
                             <DataTable.Row key={item.key}>
-                                <DataTable.Cell>{truncate(item.name)}</DataTable.Cell>
+                                <DataTable.Cell>{item.name}</DataTable.Cell>
                                 <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
                                 <DataTable.Cell>
                                     <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>
@@ -85,10 +84,6 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
             </Modal>
         </Portal>
     );
-
-    function truncate(str){
-        return (str.length > MAX_CHAR) ? str.slice(0, MAX_CHAR-1) + '...' : str;
-    }
 
     function updateItems(data) {
         if (data.length === 0) {
@@ -153,7 +148,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
 
 const styles = StyleSheet.create({
     modalContainerStyle: {
-        alignItems: 'center',
+
         backgroundColor: 'grey',
         padding: 20,
         borderRadius: 10

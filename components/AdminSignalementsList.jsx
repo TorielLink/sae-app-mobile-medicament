@@ -5,15 +5,16 @@ import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
 const MAX_CHAR = 20;
-const noDataOrdonnances = [
+const noSignalements = [
     {
         key: 0,
         name: 'Aucun médicament',
         quantity: 0,
+        date: '0/0/0'
     },
 ];
 
-export default function SelectionDrugs({hideMe, getIdUser}) {
+export default function AdminSignalementsList({hideMe}) {
     const [page, setPage] = useState(0);
     const [numberOfItemsPerPageList] = useState([10, 20, 30]);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
@@ -22,6 +23,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
             key: 0,
             name: 'Chargement...',
             quantity: 0,
+            date: '0/0/0'
         },
     ]);
 
@@ -33,7 +35,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
     }, [itemsPerPage]);
 
     useEffect(() => {
-        fetchUserMedoc();
+        fetchSignalements();
     }, []);
 
     return (
@@ -45,21 +47,19 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
                     hideMe();
                 }}>
                 <View style={styles.modalContent}>
-                    <Text>Modification de mes médicaments</Text>
+                    <Text>Médicaments signalés par les utilisateurs :</Text>
                     <DataTable>
                         <DataTable.Header>
                             <DataTable.Title>Nom</DataTable.Title>
-                            <DataTable.Title numeric>Quantité</DataTable.Title>
-                            <DataTable.Title>Suppression</DataTable.Title>
+                            <DataTable.Title numeric>Nombre</DataTable.Title>
+                            <DataTable.Title>Date</DataTable.Title>
                         </DataTable.Header>
 
                         {items.slice(from, to).map((item) => (
                             <DataTable.Row key={item.key}>
                                 <DataTable.Cell>{truncate(item.name)}</DataTable.Cell>
                                 <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
-                                <DataTable.Cell>
-                                    <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>
-                                </DataTable.Cell>
+                                <DataTable.Cell numeric>{item.date}</DataTable.Cell>
                             </DataTable.Row>
                         ))}
 
@@ -92,27 +92,26 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
 
     function updateItems(data) {
         if (data.length === 0) {
-            setItems(noDataOrdonnances);
+            setItems(noSignalements);
         } else {
             setItems(data.map((item) => {
                 return {
                     key: item.Code_CIS,
                     name: item.Denomination,
-                    quantity: item.Quantité,
+                    quantity: item.Nb_Signalement,
+                    date: new Date(item.Date_Signalement).toLocaleDateString('fr-FR')
                 };
             }));
         }
     }
 
-    function fetchUserMedoc() {
-        fetch(SERVER_ADDRESS + '/getOrdonnances', {
+    function fetchSignalements() {
+        fetch(SERVER_ADDRESS + '/getSignalements', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                idUser: getIdUser(),
-            }),
+            body: JSON.stringify({}),
         }).then(response => {
             if (!response.ok) {
                 AdaptativeAlert('Erreur du serveur')
@@ -125,29 +124,6 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
         }).catch(() => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
-    }
-
-    function removeDrug(CIS) {
-        fetch(SERVER_ADDRESS + '/removeDrug', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                idUser: getIdUser(),
-                CIS: CIS,
-            }),
-        }).then(response => {
-            if (!response.ok || response === 'OK') {
-                AdaptativeAlert('Erreur du serveur')
-            }
-            else {
-                AdaptativeAlert('Médicament supprimé');
-                hideMe();
-            }
-        }).catch(() => {
-            AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
-        });
     }
 };
 

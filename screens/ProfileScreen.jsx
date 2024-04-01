@@ -4,7 +4,7 @@ import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
-import AdminPanel from "../components/AdminPanel";
+import AdminSignalementsList from "../components/AdminSignalementsList";
 import ChangeProfileInfos from "../components/ChangeProfileInfos";
 
 import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
@@ -127,7 +127,7 @@ export default function ProfileScreen() {
                         </Button>
                     }
                     {isAdmin && showAdminPanel &&
-                        <AdminPanel hideMe={() => {setAdminPanelVisibility(false);}}/>}
+                        <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>}
 
                 </View>
             </View>

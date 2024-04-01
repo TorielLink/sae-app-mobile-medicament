@@ -1,13 +1,12 @@
 import { CameraView } from 'expo-camera/next';
-import {Camera} from 'expo-camera'
+import { Camera } from 'expo-camera'
 import React, { useState, useEffect} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import { Button, StyleSheet, Text } from 'react-native';
+import AdaptativeAlert from "./AdaptativeAlert";
 
-export default function DataMatrixScanner() {
-    {/*TODO : le composant lance des warnings*/}
+export default function DataMatrixScanner({sendCIP}) {
     const[hasCameraPermission, setHasCameraPermission] = useState(null)
     const[scanned, setScanned] = useState(null)
-    const[textScanned, setTextScanned] = useState('Aucun scan effectué')
 
     useEffect(() => {
         askForCameraPermission();
@@ -20,42 +19,49 @@ export default function DataMatrixScanner() {
         })();
     }
 
+    function cleanCIPAndSend(data) {
+        const regex = /010(\d{13})/;
+        const matchedCIP = data.match(regex);
+        if(matchedCIP){
+            sendCIP(matchedCIP[1]);
+        }
+        else {
+            AdaptativeAlert('Merci de scanner un médicament');
+        }
+    }
+
     const handleBarCodeScanned = ({data}) => {
         setScanned(true)
-        setTextScanned(data)
-    }
-
-    if(hasCameraPermission === null){
-        return(
-            <View>
-                <Text>En attente de permissions pour la caméra</Text>
-            </View>
-        )
-    }
-
-    if(hasCameraPermission === false){
-        return(
-            <View>
-                <Text>Caméra refusée</Text>
-                <Button onPress={askForCameraPermission} title={"Autoriser la caméra"}/>
-            </View>)
+        cleanCIPAndSend(data);
     }
 
     return (
-            <View>
-                <CameraView barCodeScannerSettings={{barCodeTypes: ["datamatrix"],}}
-                            onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} style={styles.camera}>
-                </CameraView>
-                <Text>{textScanned}</Text>
-                //TODO : envoi sur la BD du code CIS (ordonance)
-                {scanned && <Button title = "Scanner une nouvelle fois" onPress={() => setScanned(false)}/>}
-            </View>
-    )
+        <>
+            {hasCameraPermission === null ? (
+                <Text>En attente de permissions pour la caméra</Text>
+            ) : hasCameraPermission === false ? (
+                <>
+                    <Text>Caméra refusée</Text>
+                    <Button onPress={askForCameraPermission} title={"Autoriser la caméra"} />
+                </>
+            ) : (
+                <>
+                    {!scanned && <CameraView
+                        barCodeScannerSettings={{ barCodeTypes: ["datamatrix"] }}
+                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                        style={styles.camera}
+                    />}
+                    {scanned && <Button title="Scanner une nouvelle fois" onPress={() => setScanned(false)} />}
+                </>
+            )}
+        </>
+    );
 }
 
 const styles = StyleSheet.create({
     camera: {
-        height: 100,
-        width: 100
+        height: 200,
+        width: 200,
+        minHeight: 200
     }
 })

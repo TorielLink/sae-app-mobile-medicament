@@ -1,14 +1,18 @@
-import { useState    } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Switch } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
-import { Camera } from 'expo-camera';
 import * as Location from 'expo-location';
+import { Camera } from 'expo-camera';
+import RGPDConsent from "../components/RGPDConsent";
+import AdaptativeAlert from "../components/AdaptativeAlert";
 
 export default function SettingsScreen() {
-    const [notificationEnabled, setNotificationEnabled] = useState(false);//TODO
-    const [localisationEnabled, setLocalisationEnabled] = useState(false);//TODO
-    const [cameraAccess, setCameraAccess] = useState(false);//TODO + ca lance des warnings sur telephone
+    const [notificationEnabled, setNotificationEnabled] = useState(false);
+    const [localisationEnabled, setLocalisationEnabled] = useState(false);
+    const [cameraAccess, setCameraAccess] = useState(false);
+    const [showConsent, setShowConsent] = useState(true);
+    const [consentAccepted, setConsentAccepted] = useState(false);
 
     const toggleNotificationSwitch = async () => {
         if (notificationEnabled) {
@@ -18,7 +22,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setNotificationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès aux notifications.');
+                AdaptativeAlert('Vous avez refusé l\'accès aux notifications.');
             }
         }
     };
@@ -31,7 +35,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setLocalisationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la localisation.');
+                AdaptativeAlert('Vous avez refusé l\'accès à la localisation.');
             }
         }
     };
@@ -44,26 +48,55 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setCameraAccess(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la caméra.');
+                AdaptativeAlert('Vous avez refusé l\'accès à la caméra.');
             }
         }
     };
 
+    const handleAccept = () => {
+        setConsentAccepted(true);
+        setShowConsent(false);
+    };
+
+    const handleDecline = () => {
+        setConsentAccepted(false);
+        setShowConsent(false);
+    };
+
+    const changeConsent = () => {
+        setShowConsent(true);
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.setting}>
-                <Text>Notifications</Text>
-                <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
-            </View>
-            <View style={styles.setting}>
-                <Text>Autoriser la localisation</Text>
-                <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch} color={"#7DAE32"} />
-            </View>
-            <View style={styles.setting}>
-                <Text>Autoriser la caméra</Text>
-                <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
-            </View>
-            {cameraAccess && <Camera style={styles.camera} />}
+            {showConsent && (
+                <RGPDConsent
+                    onAccept={handleAccept}
+                    onDecline={handleDecline}
+                />
+            )}
+            {!showConsent && (
+                <View>
+                    <TouchableOpacity style={styles.changeConsentButton} onPress={changeConsent}>
+                        <Text style={styles.buttonText}>Modifier le consentement RGPD</Text>
+                    </TouchableOpacity>
+                    <View style={styles.setting}>
+                        <Text>Notifications</Text>
+                        <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
+                    </View>
+                    <View style={styles.setting}>
+                        <Text>Autoriser la localisation</Text>
+                        <Switch value={localisationEnabled} onValueChange={toggleLocalisationSwitch} color={"#7DAE32"} />
+                    </View>
+                    <View style={styles.setting}>
+                        <Text>Autoriser la caméra</Text>
+                        <Switch value={cameraAccess} onValueChange={toggleCameraSwitch} color={"#7DAE32"} />
+                    </View>
+                    {cameraAccess && <Camera style={styles.camera} />}
+                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> :
+                        <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
+                </View>
+            )}
         </View>
     );
 }
@@ -85,5 +118,22 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 300,
         marginTop: 20,
+    },
+    changeConsentButton: {
+        backgroundColor: '#7DAE32',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    consentText: {
+        fontSize: 14,
+        color: '#333',
+        marginTop: 10,
     },
 });

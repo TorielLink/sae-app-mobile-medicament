@@ -1,19 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {Button, DataTable, Modal, Text} from 'react-native-paper';
+import {Button, DataTable, Modal, Portal, Text} from 'react-native-paper';
 import {StyleSheet, View} from "react-native";
+import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
-const noDataOrdonances = [
+const MAX_CHAR = 20;
+const noDataOrdonnances = [
     {
         key: 0,
-        name: 'Aucun médicament.',
+        name: 'Aucun médicament',
         quantity: 0,
     },
 ];
 
-export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
+export default function SelectionDrugs({hideMe, getIdUser}) {
     const [page, setPage] = useState(0);
-    const [numberOfItemsPerPageList] = useState([2, 3, 4]);
+    const [numberOfItemsPerPageList] = useState([10, 20, 30]);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
     const [items, setItems] = useState([
         {
@@ -35,58 +37,62 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
     }, []);
 
     return (
-        <Modal
-            visible={true}
-            contentContainerStyle={styles.modalContainerStyle}
-            onDismiss={() => {
-                hide();
-            }}>
-            <View style={styles.modalContent}>
-                <Text>Modification de mes médicaments</Text>
-                <DataTable>
-                    <DataTable.Header>
-                        <DataTable.Title>Nom</DataTable.Title>
-                        <DataTable.Title numeric>Code CIS</DataTable.Title>
-                        <DataTable.Title numeric>Quantité</DataTable.Title>
-                        <DataTable.Title>Suppression</DataTable.Title>
-                    </DataTable.Header>
+        <Portal>
+            <Modal
+                visible={true}
+                contentContainerStyle={styles.modalContainerStyle}
+                onDismiss={() => {
+                    hideMe();
+                }}>
+                <View style={styles.modalContent}>
+                    <Text>Modification de mes médicaments</Text>
+                    <DataTable>
+                        <DataTable.Header>
+                            <DataTable.Title>Nom</DataTable.Title>
+                            <DataTable.Title numeric>Quantité</DataTable.Title>
+                            <DataTable.Title>Suppression</DataTable.Title>
+                        </DataTable.Header>
 
-                    {items.slice(from, to).map((item) => (
-                        <DataTable.Row key={item.key}>
-                            <DataTable.Cell>{item.name}</DataTable.Cell>
-                            <DataTable.Cell>{item.key}</DataTable.Cell>
-                            <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
-                            <DataTable.Cell>
-                                <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>
-                            </DataTable.Cell>
-                        </DataTable.Row>
-                    ))}
+                        {items.slice(from, to).map((item) => (
+                            <DataTable.Row key={item.key}>
+                                <DataTable.Cell>{truncate(item.name)}</DataTable.Cell>
+                                <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
+                                <DataTable.Cell>
+                                    <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>
+                                </DataTable.Cell>
+                            </DataTable.Row>
+                        ))}
 
-                    <DataTable.Pagination
-                        page={page}
-                        numberOfPages={Math.ceil(items.length / itemsPerPage)}
-                        onPageChange={(page) => setPage(page)}
-                        label={`${from + 1}-${to} of ${items.length}`}
-                        numberOfItemsPerPageList={numberOfItemsPerPageList}
-                        numberOfItemsPerPage={itemsPerPage}
-                        onItemsPerPageChange={onItemsPerPageChange}
-                        showFastPaginationControls
-                        selectPageDropdownLabel={'Rows per page'}
-                    />
-                </DataTable>
-                <Button
-                    onPress={() => {
-                        hide();
-                    }}>
-                    <Text>Annuler</Text>
-                </Button>
-            </View>
-        </Modal>
+                        <DataTable.Pagination
+                            page={page}
+                            numberOfPages={Math.ceil(items.length / itemsPerPage)}
+                            onPageChange={(page) => setPage(page)}
+                            label={`${from + 1}-${to} sur ${items.length}`}
+                            showFastPaginationControls
+                            numberOfItemsPerPageList={numberOfItemsPerPageList}
+                            numberOfItemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={onItemsPerPageChange}
+                            selectPageDropdownLabel={'Lignes par page :'}
+                        />
+                    </DataTable>
+                    <Button
+                        onPress={() => {
+                            hideMe();
+                        }}>
+                        <Text>Fermer</Text>
+                    </Button>
+                </View>
+            </Modal>
+        </Portal>
     );
+
+    function truncate(str){
+        return (str.length > MAX_CHAR) ? str.slice(0, MAX_CHAR-1) + '...' : str;
+    }
 
     function updateItems(data) {
         if (data.length === 0) {
-            setItems(noDataOrdonances);
+            setItems(noDataOrdonnances);
         } else {
             setItems(data.map((item) => {
                 return {
@@ -99,7 +105,7 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
     }
 
     function fetchUserMedoc() {
-        fetch(SERVER_ADDRESS + '/getOrdonances', {
+        fetch(SERVER_ADDRESS + '/getOrdonnances', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,7 +122,7 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
             }
         }).then(data => {
             updateItems(data);
-        }).catch(error => {
+        }).catch(() => {
                 AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
             });
     }
@@ -137,9 +143,9 @@ export default function SelectionDrugs({hide, getIdUser, SERVER_ADDRESS}) {
             }
             else {
                 AdaptativeAlert('Médicament supprimé');
-                hide();
+                hideMe();
             }
-        }).catch(error => {
+        }).catch(() => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
         });
     }
@@ -153,9 +159,9 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     modalContent: {
-        maxWidth: 400,
+        minWidth: '85%',
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,
-    }
+    },
 });

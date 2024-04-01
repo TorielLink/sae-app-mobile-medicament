@@ -10,7 +10,7 @@ require('dotenv').config();
 const port = process.env.PORT ?? 8100;
 const MIN_LENGTH_PASSWORD_USER = 5;
 const MIN_LENGTH_NAME_USER = 1;
-const HOME_REP_SERVER = "/saeGestionMedicaments";//TODO pour faire en local modifier par ""
+const HOME_REP_SERVER = "/saeGestionMedicaments";//pour un serveur en local, modifier par ""
 
 // creating connection
 const connection = mysql.createConnection({
@@ -74,28 +74,15 @@ app.get(`${HOME_REP_SERVER}/`, function (req, res){
 });
 
 /**
- * Test query on drug
- * TODO : remove
- */
-app.get(`${HOME_REP_SERVER}/medoc`, function (req, res) {
-    let sql = 'SELECT * FROM Medicaments WHERE Code_CIS = 60002283';
-    executeQuery(sql, [], function (error, result){
-        if(error){
-            res.status(500).json(error);
-        }
-        else {
-            res.json(result);
-        }
-    });
-});
-
-/**
  * Search for a drug by CIS code
  */
 app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
-    let sql = 'SELECT Denomination FROM Medicaments WHERE Code_CIS LIKE ?';
+    let sql = 'SELECT M.Code_CIS, M.Denomination FROM Medicaments M INNER JOIN Correspondances C ON M.Code_CIS = C.Code_CIS WHERE M.Code_CIS LIKE ? OR C.Code_CIP7 LIKE ? OR C.Code_CIP13 LIKE ? OR Denomination LIKE ? LIMIT 20';
     let values = [
-        `${req.body.CIS}%`
+        `${req.body.CIS}%`,
+        `${req.body.CIS}%`,
+        `${req.body.CIS}%`,
+        `%${req.body.CIS}%`
     ];
     executeQuery(sql, values, function (error, result){
         if(error){
@@ -110,7 +97,7 @@ app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
 /**
  * Get user's drugs on the Ordonnance table
  */
-app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
+app.post(`${HOME_REP_SERVER}/getOrdonnances`, function (req, res) {
     let sql = 'SELECT O.Code_CIS, M.Denomination, O.Quantité FROM Ordonnance O INNER JOIN Medicaments M ON O.Code_CIS = M.Code_CIS WHERE Id_Utilisateur = ?';
     let values = [
         req.body.idUser
@@ -126,26 +113,91 @@ app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
 });
 
 /**
- * Mettre à jour le statut Bdm du médicament
+ * Add a signalement
  */
-app.post(`${HOME_REP_SERVER}/updateMedStatus`, function (req, res) {
-    let sql = 'UPDATE Medicaments SET StatutBdm = ? WHERE Code_CIS = ?';
+app.post(`${HOME_REP_SERVER}/addSignalement`, function (req, res){
+    let sqlCIP = 'SELECT C.Code_CIS FROM Correspondances C WHERE C.Code_CIS = ? OR C.Code_CIP7 = ? OR C.Code_CIP13 = ?';
     let values = [
-        req.body.newStatus,
-        req.body.CIS
+        req.body.CIP,
+        req.body.CIP,
+        req.body.CIP
     ];
-    executeQuery(sql, values, function (error, result){
+    executeQuery(sqlCIP, values, function (error, result){
         if(error){
             res.status(500).json(error);
         }
         else {
-            res.send('Statut du médicament mis à jour avec succès');
+            if(result.length > 0){
+                makeTheSignalement(res, result[0].Code_CIS)
+            }
+            else {
+                res.status(500).json("noData");
+            }
         }
     });
 });
 
 /**
- * Remove drug from user's Ordonance table
+ * really make the signalement
+ */
+function makeTheSignalement(res, codeCIS) {
+    let sqlCheck = 'SELECT S.Code_CIS FROM Signalements S WHERE S.Code_CIS = ?';
+    let valuesCheck = [
+        codeCIS
+    ];
+
+    executeQuery(sqlCheck, valuesCheck, function (error, result) {
+        if (error) {
+            res.status(500).json(error);
+        } else {
+            if (result.length > 0) {
+                let sqlUpdate = 'UPDATE Signalements SET Nb_Signalement = Nb_Signalement + 1, Date_Signalement = ? WHERE Code_CIS = ?';
+                let valuesUpdate = [
+                    new Date().toISOString().slice(0, 19).replace('T', ' '),
+                    codeCIS
+                ];
+
+                executeQuery(sqlUpdate, valuesUpdate, function (error, result) {
+                    if (error) {
+                        res.status(500).json(error);
+                    } else {
+                        res.json({ message: 'Médicament signalé avec succès' });
+                    }
+                });
+            } else {
+                let sqlInsert = 'INSERT INTO Signalements (Code_CIS) VALUES (?)';
+                let valuesInsert = [codeCIS];
+
+                executeQuery(sqlInsert, valuesInsert, function (error, result) {
+                    if (error) {
+                        res.status(500).json(error);
+                    } else {
+                        res.json({ message: 'Médicament signalé avec succès' });
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Get signalements
+ */
+app.post(`${HOME_REP_SERVER}/getSignalements`, function (req, res) {
+    let sql = 'SELECT M.Denomination, M.Code_CIS, S.Date_Signalement, S.Nb_Signalement FROM Signalements S INNER JOIN Medicaments M ON S.Code_CIS = M.Code_CIS';
+    let values = [];
+    executeQuery(sql, values, function (error, result){
+        if(error){
+            res.status(500).json(error);
+        }
+        else {
+            res.json(result);
+        }
+    });
+});
+
+/**
+ * Remove drug from user's Ordonnance table
  */
 app.post(`${HOME_REP_SERVER}/removeDrug`, function (req, res) {
     let sql = 'DELETE FROM Ordonnance WHERE Id_Utilisateur = ? AND Code_CIS = ?';
@@ -168,7 +220,7 @@ app.post(`${HOME_REP_SERVER}/removeDrug`, function (req, res) {
  */
 app.post(`${HOME_REP_SERVER}/login`, function (req, res){
     console.log('User "' + req.body.firstName + ' ' + req.body.lastName + '" is trying to login');
-    let sql = 'SELECT Id_Utilisateur, Id_Utilisateur, Prenom, Nom_Famille FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
+    let sql = 'SELECT Id_Utilisateur, Prenom, Nom_Famille, Admin FROM Utilisateurs WHERE Prenom = ? AND Nom_Famille = ? AND Mot_De_Passe = ?';
     let values = [
         req.body.firstName,
         req.body.lastName,
@@ -184,6 +236,9 @@ app.post(`${HOME_REP_SERVER}/login`, function (req, res){
     });
 });
 
+/**
+ * Create an account
+ */
 app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
     if(req.body.passwordUser.length < MIN_LENGTH_PASSWORD_USER || req.body.firstName < MIN_LENGTH_NAME_USER || req.body.lastName < MIN_LENGTH_NAME_USER){
         res.status(500).json({errorMessage: 'Un des champs est trop court.'});
@@ -203,6 +258,42 @@ app.post(`${HOME_REP_SERVER}/createAccount`, function (req, res){
             res.json(result);
         }
     });
+});
+
+/**
+ * Update user's information
+ */
+app.post(`${HOME_REP_SERVER}/updateProfile`, function (req, res){
+    const { idUser, firstName, lastName, password } = req.body;
+
+    let updateFields = [];
+    if (firstName) {
+        updateFields.push("`Prenom` = '" + firstName + "'");
+    }
+    if (lastName) {
+        updateFields.push("`Nom_Famille` = '" + lastName + "'");
+    }
+    if (password) {
+        updateFields.push("`Mot_De_Passe` = '" + password + "'");
+    }
+
+    if (updateFields.length > 0) {
+        let updateFieldsString = updateFields.join(", ");
+        let sql = "UPDATE Utilisateurs SET " + updateFieldsString + " WHERE Id_Utilisateur = ?";
+            let values = [
+                idUser
+            ];
+            executeQuery(sql, values, function (error, result) {
+                if (error) {
+                    console.error(error);
+                    res.status(500).json(error);
+                } else {
+                    res.status(200).json('User information updated successfully');
+                }
+            });
+    } else {
+        res.status(400).json('No fields to update');
+    }
 });
 
 
@@ -247,34 +338,70 @@ app.post(`${HOME_REP_SERVER}/delete`, function (req, res){
     });
 });
 
+/**
+ * Add a drug to the user's Ordonnance table
+ */
 app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
-    let sql = 'INSERT INTO Ordonnance(ID_UTILISATEUR, CODE_CIS, QUANTITÉ) VALUES (?, ?, ?)';
-    let idUser = -1;
-    let quantity = req.body.quantityMedoc;
-    if(quantity < 0){
-        res.send("Error : negative quantity");
-        return;
-    }
-    getIdUser(req.body.firstName, req.body.lastName, function (error, result){
+    let sqlCIP = 'SELECT C.Code_CIS FROM Correspondances C WHERE C.Code_CIS = ? OR C.Code_CIP7 = ? OR C.Code_CIP13 = ?';
+    let values = [
+        req.body.CIP,
+        req.body.CIP,
+        req.body.CIP
+    ];
+    executeQuery(sqlCIP, values, function (error, result){
         if(error){
-            console.error(error);
-            res.status(500).json(error);
+            res.send("ERROR");
         }
         else {
-            idUser = result[0].Id_Utilisateur;
-            let values = [
-                idUser,
-                req.body.idMedoc,
-                quantity
-            ];
-            executeQuery(sql, values, function(error, result){
-                if(error){
-                    res.status(500).json(error);
-                }
-                else {
-                    res.json(result);
-                }
-            })
+            if(result.length > 0){
+                let codeCIS = result[0].Code_CIS;
+
+                let sqlCheck = 'SELECT O.Code_CIS FROM Ordonnance O WHERE O.Code_CIS = ? AND O.Id_Utilisateur = ?';
+                let valuesCheck = [
+                    codeCIS,
+                    req.body.idUser
+                ];
+
+                executeQuery(sqlCheck, valuesCheck, function (error, result) {
+                    if (error) {
+                        res.send("ERROR");
+                    } else {
+                        if (result.length > 0) {
+                            let sqlUpdate = 'UPDATE Ordonnance SET Quantité = Quantité + 1 WHERE Id_Utilisateur = ? AND Code_CIS = ?';
+                            let valuesUpdate = [
+                                req.body.idUser,
+                                codeCIS
+                            ];
+
+                            executeQuery(sqlUpdate, valuesUpdate, function (error, result) {
+                                if(error){
+                                    res.send('ERROR')
+                                }
+                                else {
+                                    res.send("OK");
+                                }
+                            });
+                        } else {
+                            let sqlCIP = 'INSERT INTO Ordonnance (Id_Utilisateur, Code_CIS, Quantité) VALUES (?, ?, 1)';
+                            let values = [
+                                req.body.idUser,
+                                codeCIS
+                            ];
+                            executeQuery(sqlCIP, values, function (error, result){
+                                if(error){
+                                    res.send('ERROR')
+                                }
+                                else {
+                                    res.send("OK");
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                res.send("ERROR");
+            }
         }
     });
 });

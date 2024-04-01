@@ -1,0 +1,3 @@
+pandas==2.2.1
+mysql-connector==2.2.9
+load-dotenv==0.1.0

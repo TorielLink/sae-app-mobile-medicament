@@ -7,6 +7,7 @@ import DataMatrixScanner from "./DataMatrixScanner";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {SERVER_ADDRESS} from "../constants/constants";
 import {useUserContext} from "../contexts/UserContext";
+import LastSignalementsList from "./LastSignalementsList";
 
 export default function GestionCIS() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -92,7 +93,7 @@ export default function GestionCIS() {
             } else {
                 AdaptativeAlert('Médicament signalé avec succès');
                 setSearchQuery('');
-                AsyncStorage.setItem('userInput', '');
+                AsyncStorage.setItem('userInput', '').then(() => {});
             }
         }).catch(() => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');
@@ -119,61 +120,64 @@ export default function GestionCIS() {
     }
 
     return (
-        <View style={styles.container}>
-            <View>
-                {!isConnected && (
-                    <Text>Hors connexion</Text>
-                )}
-            </View>
-            <View style={styles.searchContainer}>
-                <Searchbar
-                    placeholder="Entrez un médicament"
-                    onChangeText={(query) => {
-                        setSearchQuery(query);
-                        searchDrug(query);
-                    }}
-                    value={searchQuery}
-                    iconColor={"#7DAE32"}
-                    style={styles.searchbar}
-                />
-                {Platform.OS !== 'web' && (
-                    <Button
-                        icon="data-matrix-scan"
-                        mode="contained"
-                        onPress={() => setScanVisibility(true)}
-                        buttonColor={"#FFF"}
-                        textColor={"black"}
-                        compact={true}
-                        contentStyle={styles.buttonIcon}
-                    >Scan</Button>
-                )}
-            </View>
-            <Portal>
-                <Modal visible={scanVisible}
-                       onDismiss={()=> setScanVisibility(false)}
-                       contentContainerStyle={styles.containerStyle}>
-                    <DataMatrixScanner sendCIP={(cip) => saveCIPToDataBase(cip)}/>
-                </Modal>
-            </Portal>
-
-            <List.Section style={styles.suggestionList}>
-                {searchQuery.length > 0 && suggestions.map((item, index) => (
-                    <List.Item
-                        key={index}
-                        title={item.Denomination}
-                        onPress={() => handleSuggestionPress(item.Code_CIS)}
+        <View>
+            <View style={styles.containerCIS}>
+                <View>
+                    {!isConnected && (
+                        <Text>Hors connexion</Text>
+                    )}
+                </View>
+                <View style={styles.searchContainer}>
+                    <Searchbar
+                        placeholder="Entrez un médicament"
+                        onChangeText={(query) => {
+                            setSearchQuery(query);
+                            searchDrug(query);
+                        }}
+                        value={searchQuery}
+                        iconColor={"#7DAE32"}
+                        style={styles.searchbar}
                     />
-                ))}
-            </List.Section>
+                    {Platform.OS !== 'web' && (
+                        <Button
+                            icon="data-matrix-scan"
+                            mode="contained"
+                            onPress={() => setScanVisibility(true)}
+                            buttonColor={"#FFF"}
+                            textColor={"black"}
+                            compact={true}
+                            contentStyle={styles.buttonIcon}
+                        >Scan</Button>
+                    )}
+                </View>
+                <Portal>
+                    <Modal visible={scanVisible}
+                           onDismiss={()=> setScanVisibility(false)}
+                           contentContainerStyle={styles.containerStyle}>
+                        <DataMatrixScanner sendCIP={(cip) => saveCIPToDataBase(cip)}/>
+                    </Modal>
+                </Portal>
+
+                <List.Section style={styles.suggestionList}>
+                    {searchQuery.length > 0 && suggestions.map((item, index) => (
+                        <List.Item
+                            key={index}
+                            title={item.Denomination}
+                            onPress={() => handleSuggestionPress(item.Code_CIS)}
+                        />
+                    ))}
+                </List.Section>
+            </View>
+            <LastSignalementsList handleSignaledCIPPress={(cip) => {handleSuggestionPress(cip)}}/>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     searchContainer: {
+        alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        alignItems: 'center',
         width: '100%',
     },
     searchbar: {
@@ -195,4 +199,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 20
     },
+    containerCIS: {
+        zIndex: 5,
+        marginVertical: 40,
+    }
 });

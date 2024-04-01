@@ -108,7 +108,6 @@ const styles = {
     },
     modalContent: {
         justifyContent: "center",
-        alignItems: "center",
     },
     input: {
         marginBottom: 10,

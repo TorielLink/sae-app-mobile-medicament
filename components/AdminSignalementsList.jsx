@@ -4,7 +4,6 @@ import {StyleSheet, View} from "react-native";
 import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
-const MAX_CHAR = 20;
 const noSignalements = [
     {
         key: 0,
@@ -52,12 +51,12 @@ export default function AdminSignalementsList({hideMe}) {
                         <DataTable.Header>
                             <DataTable.Title>Nom</DataTable.Title>
                             <DataTable.Title numeric>Nombre</DataTable.Title>
-                            <DataTable.Title>Date</DataTable.Title>
+                            <DataTable.Title numeric>Date</DataTable.Title>
                         </DataTable.Header>
 
                         {items.slice(from, to).map((item) => (
                             <DataTable.Row key={item.key}>
-                                <DataTable.Cell>{truncate(item.name)}</DataTable.Cell>
+                                <DataTable.Cell>{item.name}</DataTable.Cell>
                                 <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
                                 <DataTable.Cell numeric>{item.date}</DataTable.Cell>
                             </DataTable.Row>
@@ -85,10 +84,6 @@ export default function AdminSignalementsList({hideMe}) {
             </Modal>
         </Portal>
     );
-
-    function truncate(str){
-        return (str.length > MAX_CHAR) ? str.slice(0, MAX_CHAR-1) + '...' : str;
-    }
 
     function updateItems(data) {
         if (data.length === 0) {
@@ -129,7 +124,6 @@ export default function AdminSignalementsList({hideMe}) {
 
 const styles = StyleSheet.create({
     modalContainerStyle: {
-        alignItems: 'center',
         backgroundColor: 'grey',
         padding: 20,
         borderRadius: 10

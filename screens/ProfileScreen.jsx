@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Linking, StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import SelectionDrugs from "../components/SelectionDrugs";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
 import AdminSignalementsList from "../components/AdminSignalementsList";
+//import AdminPanel from "../components/AdminPanel";
 import ChangeProfileInfos from "../components/ChangeProfileInfos";
 
 import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
@@ -14,7 +17,7 @@ export default function ProfileScreen() {
     const contactUs = () => {
         Linking.openURL("mailto:service.technique@AppMobile.com?subject=Remarques sur l'application");
     };
-    const [userConnected, setUserConnected] = useState(false); //TODO connection automatique
+    const [userConnected, setUserConnected] = useState(false);
     const [creatingUser, setCreatingUser] = useState(false);
     const [changingProfileInfos, setChangingProfileInfos] = useState(false);
     const [deletingProfile, setDeletingProfile] = useState(false);
@@ -33,13 +36,37 @@ export default function ProfileScreen() {
 
     const { storeUserId } = useUserContext();
 
+    useEffect(() => {
+        Promise.all([
+            AsyncStorage.getItem('userFirstName'),
+            AsyncStorage.getItem('userLastName'),
+            AsyncStorage.getItem('userPassword')
+        ])
+            .then(([firstName, lastName, password]) => {
+                if (firstName) {
+                    setFirstName(firstName);
+                }
+                if (lastName) {
+                    setLastName(lastName);
+                }
+                if (password) {
+                    setPasswordUser(password);
+                }
+                if(sizeFormInputOK()){
+                    submitLoginForm();
+                }
+            })
+            .catch(() => {});
+    }, []);
+
+
     return (
         <View>
             <View style={styles.screen}>
                 <Text id={"UserProfileTitle"} style={styles.title}>{titleText}</Text>
-                <View style={{ flexDirection: 'column' }}>
+                <View style={styles.buttonsProfile}>
                     {userConnected &&
-                        <View>
+                        <>
                             <Button
                                 icon="account-edit"
                                 mode="contained"
@@ -56,7 +83,7 @@ export default function ProfileScreen() {
                                 style={styles.buttonStyle}>
                                 Mes médicaments
                             </Button>
-                        </View>}
+                        </>}
 
                     {(!userConnected && !showForm) &&
                         <Button
@@ -76,7 +103,7 @@ export default function ProfileScreen() {
                     </Button>}
 
                     {showForm &&
-                        <View>
+                        <>
                             <TextInput
                                 label="Prénom"
                                 value={firstName}
@@ -102,7 +129,7 @@ export default function ProfileScreen() {
                                     buttonColor={"#BC2C2C"} style={styles.buttonStyle}>
                                 Annuler
                             </Button>
-                        </View>}
+                        </>}
 
                     <Button icon="human-greeting-proximity" mode="contained" onPress={contactUs} buttonColor={"#7DAE32"}
                             style={styles.buttonStyle}>
@@ -110,7 +137,7 @@ export default function ProfileScreen() {
                     </Button>
 
                     {userConnected &&
-                        <View>
+                        <>
                             <Button icon="logout" mode="contained" onPress={disconnectProfile} buttonColor={"#BC2C2C"}
                                     style={styles.buttonStyle}>
                                 Me déconnecter
@@ -119,18 +146,22 @@ export default function ProfileScreen() {
                                     style={styles.buttonStyle}>
                                 Supprimer mon compte
                             </Button>
-                        </View>}
+                        </>}
                     {isAdmin &&
                         <Button icon="security" mode="contained" onPress={() => setAdminPanelVisibility(true)} buttonColor={"#A68A64"}
                                 style={styles.buttonStyle}>
                             Panneau d'administration
                         </Button>
                     }
-                    {isAdmin && showAdminPanel &&
-                        <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>}
-
                 </View>
             </View>
+
+            {isAdmin && showAdminPanel &&
+                <>
+                    <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>
+                    {/*<AdminPanel hideMe={() => {setAdminPanelVisibility(false);}}/>*/}
+                </>
+                }
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hideMe={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}
@@ -164,6 +195,10 @@ export default function ProfileScreen() {
         setUserConnected(false);
         setTitleText("Compte utilisateur");
         storeUserId(null);
+
+        AsyncStorage.setItem('userFirstName', '').then(() => {})
+        AsyncStorage.setItem('userLastName', '').then(() => {})
+        AsyncStorage.setItem('userPassword', '').then(() => {})
     }
 
     function createProfile() {
@@ -210,6 +245,10 @@ export default function ProfileScreen() {
                 setIsAdmin(data[0].Admin === 1)
                 setUserConnected(true);
                 storeUserId(data[0].Id_Utilisateur);
+
+                AsyncStorage.setItem('userFirstName', firstName).then(() => {})
+                AsyncStorage.setItem('userLastName', lastName).then(() => {})
+                AsyncStorage.setItem('userPassword', passwordUser).then(() => {})
             }
             setShowForm(false);
         })
@@ -261,7 +300,16 @@ export default function ProfileScreen() {
     }
 
     function sizeFormInputOK() {
-        return !(firstName.length < MIN_LENGTH_NAME_USER || lastName.length < MIN_LENGTH_NAME_USER || passwordUser.length < MIN_LENGTH_PASSWORD_USER);
+        if(firstName.length < MIN_LENGTH_NAME_USER){
+            return false;
+        }
+        if(lastName.length < MIN_LENGTH_NAME_USER){
+            return false;
+        }
+        if(passwordUser.length < MIN_LENGTH_PASSWORD_USER){
+            return false;
+        }
+        return true;
     }
 
     function deleteProfile() {
@@ -303,9 +351,13 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     screen: {
-        alignItems: 'center',
+        alignItems: 'center'
+    },
+    buttonsProfile: {
+
     },
     title: {
+        textAlign: 'center',
         fontSize: 30,
         marginTop: 20,
         marginBottom: 30,

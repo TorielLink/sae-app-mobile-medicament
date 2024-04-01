@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { DataTable, Modal, Portal, Text } from "react-native-paper";
-import LineChart from "react-native-chart-kit";
+import React, {useEffect, useState} from "react";
 import AdaptativeAlert from "./AdaptativeAlert";
 import {SERVER_ADDRESS} from "../constants/constants";
+import {DataTable, Modal, Portal, Text} from "react-native-paper";
+import {StyleSheet, View} from "react-native";
+import {LineChart} from "react-native-chart-kit";
 
 export default function AdminPanel({hideMe}) {
     const [statistics, setStatistics] = useState({});
@@ -42,19 +42,19 @@ export default function AdminPanel({hideMe}) {
                             </DataTable.Header>
                             <DataTable.Row>
                                 <DataTable.Cell>Moyenne du nombre de signalements</DataTable.Cell>
-                                <DataTable.Cell numeric>{mean_nb_signalements}</DataTable.Cell>
+                                <DataTable.Cell numeric>{statistics.mean_nb_signalements}</DataTable.Cell>
                             </DataTable.Row>
                             <DataTable.Row>
                                 <DataTable.Cell>Médiane du nombre de signalements</DataTable.Cell>
-                                <DataTable.Cell numeric>{median_nb_signalements}</DataTable.Cell>
+                                <DataTable.Cell numeric>{statistics.median_nb_signalements}</DataTable.Cell>
                             </DataTable.Row>
                             <DataTable.Row>
                                 <DataTable.Cell>Écart-type du nombre de signalements</DataTable.Cell>
-                                <DataTable.Cell numeric>{std_dev_nb_signalements}</DataTable.Cell>
+                                <DataTable.Cell numeric>{statistics.std_dev_nb_signalements}</DataTable.Cell>
                             </DataTable.Row>
                             <DataTable.Row>
                                 <DataTable.Cell>Total des signalements</DataTable.Cell>
-                                <DataTable.Cell numeric>{total_signalements}</DataTable.Cell>
+                                <DataTable.Cell numeric>{statistics.total_signalements}</DataTable.Cell>
                             </DataTable.Row>
                         </DataTable>
                     </View>

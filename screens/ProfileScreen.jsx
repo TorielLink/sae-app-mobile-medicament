@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import {Linking, StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import SelectionDrugs from "../components/SelectionDrugs";
 import AdaptativeAlert from "../components/AdaptativeAlert";
 import ModalAlert from '../components/ModalAlert';
 import AdminSignalementsList from "../components/AdminSignalementsList";
+//import AdminPanel from "../components/AdminPanel";
 import ChangeProfileInfos from "../components/ChangeProfileInfos";
 
 import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
 import {useUserContext} from "../contexts/UserContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
     const contactUs = () => {
@@ -155,7 +157,11 @@ export default function ProfileScreen() {
             </View>
 
             {isAdmin && showAdminPanel &&
-                <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>}
+                <>
+                    <AdminSignalementsList hideMe={() => {setAdminPanelVisibility(false);}}/>
+                    {/*<AdminPanel hideMe={() => {setAdminPanelVisibility(false);}}/>*/}
+                </>
+                }
             {userConnected && showDrugsModif &&
                 <SelectionDrugs hideMe={() => {setDrugsModifVisibility(false);}} getIdUser={
                     () => {return idUser}}/>}

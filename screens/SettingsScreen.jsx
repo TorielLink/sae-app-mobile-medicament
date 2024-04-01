@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { Switch } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
@@ -58,7 +58,12 @@ export default function SettingsScreen() {
     };
 
     const handleDecline = () => {
+        setConsentAccepted(false);
         setShowConsent(false);
+    };
+
+    const changeConsent = () => {
+        setShowConsent(true);
     };
 
     return (
@@ -71,6 +76,9 @@ export default function SettingsScreen() {
             )}
             {!showConsent && (
                 <View>
+                    <TouchableOpacity style={styles.changeConsentButton} onPress={changeConsent}>
+                        <Text style={styles.buttonText}>Modifier le consentement RGPD</Text>
+                    </TouchableOpacity>
                     <View style={styles.setting}>
                         <Text>Notifications</Text>
                         <Switch value={notificationEnabled} onValueChange={toggleNotificationSwitch} color={"#7DAE32"} />
@@ -81,7 +89,7 @@ export default function SettingsScreen() {
                     </View>
                     <View style={styles.setting}>
                         <Text>Autoriser la caméra</Text>
-                        <Switch value={cameraAccess} onValueChange={toggleCameraSwitch}  color={"#7DAE32"} />
+                        <Switch value={cameraAccess} onValueChange={toggleCameraSwitch} color={"#7DAE32"} />
                     </View>
                     {cameraAccess && <Camera style={styles.camera} />}
                     {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> : <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
@@ -108,5 +116,22 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 300,
         marginTop: 20,
+    },
+    changeConsentButton: {
+        backgroundColor: '#7DAE32',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    consentText: {
+        fontSize: 14,
+        color: '#333',
+        marginTop: 10,
     },
 });

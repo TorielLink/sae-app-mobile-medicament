@@ -49,7 +49,6 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
                     <DataTable>
                         <DataTable.Header>
                             <DataTable.Title>Nom</DataTable.Title>
-                            <DataTable.Title numeric>Code CIS</DataTable.Title>
                             <DataTable.Title numeric>Quantité</DataTable.Title>
                             <DataTable.Title>Suppression</DataTable.Title>
                         </DataTable.Header>
@@ -57,7 +56,6 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
                         {items.slice(from, to).map((item) => (
                             <DataTable.Row key={item.key}>
                                 <DataTable.Cell>{truncate(item.name)}</DataTable.Cell>
-                                <DataTable.Cell numeric>{item.key}</DataTable.Cell>
                                 <DataTable.Cell numeric>{item.quantity}</DataTable.Cell>
                                 <DataTable.Cell>
                                     <Button onPress={() => removeDrug(item.key)}>Supprimer</Button>

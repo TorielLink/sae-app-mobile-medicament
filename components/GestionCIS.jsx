@@ -127,12 +127,11 @@ export default function GestionCIS() {
             </View>
             <View style={styles.searchContainer}>
                 <Searchbar
-                    placeholder="Entrez un code"
+                    placeholder="Entrez un médicament"
                     onChangeText={(query) => {
                         setSearchQuery(query);
                         searchDrug(query);
                     }}
-                    keyboardType={"numeric"}
                     value={searchQuery}
                     iconColor={"#7DAE32"}
                     style={styles.searchbar}

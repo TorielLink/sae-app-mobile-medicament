@@ -175,6 +175,7 @@ export default function GestionCIS() {
 
 const styles = StyleSheet.create({
     searchContainer: {
+        alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         width: '100%',

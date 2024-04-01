@@ -55,7 +55,6 @@ export default function LatestSignalementsList({handleSignaledCIPPress}) {
 
 const styles = StyleSheet.create({
     containerStyle: {
-        flex: 1,
         padding: 10,
     },
     list: {

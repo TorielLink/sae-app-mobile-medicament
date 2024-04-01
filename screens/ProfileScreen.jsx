@@ -351,11 +351,10 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     screen: {
-
+        alignItems: 'center'
     },
     buttonsProfile: {
-        flexDirection: 'column',
-        alignItems: 'center',
+
     },
     title: {
         textAlign: 'center',

@@ -38,11 +38,11 @@ export const UserProvider = ({ children }) => {
             if (response.ok) {
                 return response;
             }
-        }).then(data => {
+        }).then(() => {
             //ajout OK
         })
             .catch(() => {
-                //pas de reseau
+                //pas de réseau
             });
     }
 };

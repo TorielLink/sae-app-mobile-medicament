@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Switch } from 'react-native-paper';
 import * as Notifications from 'expo-notifications';
 import * as Location from 'expo-location';
 import { Camera } from 'expo-camera';
-import GDPRConsent from '../components/RGPDConsent';
+import RGPDConsent from "../components/RGPDConsent";
+import AdaptativeAlert from "../components/AdaptativeAlert";
 
 export default function SettingsScreen() {
     const [notificationEnabled, setNotificationEnabled] = useState(false);
@@ -21,7 +22,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setNotificationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès aux notifications.');
+                AdaptativeAlert('Vous avez refusé l\'accès aux notifications.');
             }
         }
     };
@@ -34,7 +35,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setLocalisationEnabled(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la localisation.');
+                AdaptativeAlert('Vous avez refusé l\'accès à la localisation.');
             }
         }
     };
@@ -47,7 +48,7 @@ export default function SettingsScreen() {
             if (status === 'granted') {
                 setCameraAccess(true);
             } else {
-                Alert.alert('Autorisation refusée', 'Vous avez refusé l\'accès à la caméra.');
+                AdaptativeAlert('Vous avez refusé l\'accès à la caméra.');
             }
         }
     };
@@ -69,7 +70,7 @@ export default function SettingsScreen() {
     return (
         <View style={styles.container}>
             {showConsent && (
-                <GDPRConsent
+                <RGPDConsent
                     onAccept={handleAccept}
                     onDecline={handleDecline}
                 />

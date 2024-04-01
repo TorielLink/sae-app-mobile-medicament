@@ -5,7 +5,7 @@ import {SERVER_ADDRESS} from "../constants/constants";
 import AdaptativeAlert from "./AdaptativeAlert"
 
 const MAX_CHAR = 20;
-const noDataOrdonances = [
+const noDataOrdonnances = [
     {
         key: 0,
         name: 'Aucun médicament',
@@ -92,7 +92,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
 
     function updateItems(data) {
         if (data.length === 0) {
-            setItems(noDataOrdonances);
+            setItems(noDataOrdonnances);
         } else {
             setItems(data.map((item) => {
                 return {
@@ -105,7 +105,7 @@ export default function SelectionDrugs({hideMe, getIdUser}) {
     }
 
     function fetchUserMedoc() {
-        fetch(SERVER_ADDRESS + '/getOrdonances', {
+        fetch(SERVER_ADDRESS + '/getOrdonnances', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

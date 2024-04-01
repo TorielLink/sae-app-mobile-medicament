@@ -1,8 +1,8 @@
 # Utilisation de la base de données
 
-_Mise a jour par Rémi le 04/03/2023_
+_Mis à jour par Rémi le 04/03/2023_
 
-### ETAPES D'IMPORT
+### ÉTAPES D'IMPORT
 1) Pré-requis
     - avoir les accès PHPMyAdmin distant (alwaysdata)
     - avoir installé en local MySQL et PHPMyAdmin

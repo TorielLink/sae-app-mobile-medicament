@@ -97,7 +97,7 @@ app.post(`${HOME_REP_SERVER}/searchDrug`, function (req, res) {
 /**
  * Get user's drugs on the Ordonnance table
  */
-app.post(`${HOME_REP_SERVER}/getOrdonances`, function (req, res) {
+app.post(`${HOME_REP_SERVER}/getOrdonnances`, function (req, res) {
     let sql = 'SELECT O.Code_CIS, M.Denomination, O.Quantité FROM Ordonnance O INNER JOIN Medicaments M ON O.Code_CIS = M.Code_CIS WHERE Id_Utilisateur = ?';
     let values = [
         req.body.idUser
@@ -323,7 +323,7 @@ app.post(`${HOME_REP_SERVER}/delete`, function (req, res){
 });
 
 /**
- * Add a drug to the user's Ordonance table
+ * Add a drug to the user's Ordonnance table
  */
 app.post(`${HOME_REP_SERVER}/prescription`, function (req, res){
     let sqlCIP = 'SELECT C.Code_CIS FROM Correspondances C WHERE C.Code_CIS = ? OR C.Code_CIP7 = ? OR C.Code_CIP13 = ?';

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Linking, StyleSheet, Text, View} from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import SelectionDrugs from "../components/SelectionDrugs";
@@ -9,12 +9,13 @@ import ChangeProfileInfos from "../components/ChangeProfileInfos";
 
 import {MIN_LENGTH_NAME_USER, MIN_LENGTH_PASSWORD_USER, SERVER_ADDRESS} from "../constants/constants";
 import {useUserContext} from "../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileScreen() {
     const contactUs = () => {
         Linking.openURL("mailto:service.technique@AppMobile.com?subject=Remarques sur l'application");
     };
-    const [userConnected, setUserConnected] = useState(false); //TODO connection automatique
+    const [userConnected, setUserConnected] = useState(false);
     const [creatingUser, setCreatingUser] = useState(false);
     const [changingProfileInfos, setChangingProfileInfos] = useState(false);
     const [deletingProfile, setDeletingProfile] = useState(false);
@@ -32,6 +33,30 @@ export default function ProfileScreen() {
     const [showAdminPanel, setAdminPanelVisibility] = useState(false);
 
     const { storeUserId } = useUserContext();
+
+    useEffect(() => {
+        Promise.all([
+            AsyncStorage.getItem('userFirstName'),
+            AsyncStorage.getItem('userLastName'),
+            AsyncStorage.getItem('userPassword')
+        ])
+            .then(([firstName, lastName, password]) => {
+                if (firstName) {
+                    setFirstName(firstName);
+                }
+                if (lastName) {
+                    setLastName(lastName);
+                }
+                if (password) {
+                    setPasswordUser(password);
+                }
+                if(sizeFormInputOK()){
+                    submitLoginForm();
+                }
+            })
+            .catch(() => {});
+    }, []);
+
 
     return (
         <View>
@@ -164,6 +189,10 @@ export default function ProfileScreen() {
         setUserConnected(false);
         setTitleText("Compte utilisateur");
         storeUserId(null);
+
+        AsyncStorage.setItem('userFirstName', '').then(() => {})
+        AsyncStorage.setItem('userLastName', '').then(() => {})
+        AsyncStorage.setItem('userPassword', '').then(() => {})
     }
 
     function createProfile() {
@@ -210,6 +239,10 @@ export default function ProfileScreen() {
                 setIsAdmin(data[0].Admin === 1)
                 setUserConnected(true);
                 storeUserId(data[0].Id_Utilisateur);
+
+                AsyncStorage.setItem('userFirstName', firstName).then(() => {})
+                AsyncStorage.setItem('userLastName', lastName).then(() => {})
+                AsyncStorage.setItem('userPassword', passwordUser).then(() => {})
             }
             setShowForm(false);
         })
@@ -261,7 +294,16 @@ export default function ProfileScreen() {
     }
 
     function sizeFormInputOK() {
-        return !(firstName.length < MIN_LENGTH_NAME_USER || lastName.length < MIN_LENGTH_NAME_USER || passwordUser.length < MIN_LENGTH_PASSWORD_USER);
+        if(firstName.length < MIN_LENGTH_NAME_USER){
+            return false;
+        }
+        if(lastName.length < MIN_LENGTH_NAME_USER){
+            return false;
+        }
+        if(passwordUser.length < MIN_LENGTH_PASSWORD_USER){
+            return false;
+        }
+        return true;
     }
 
     function deleteProfile() {

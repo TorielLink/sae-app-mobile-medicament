@@ -93,7 +93,7 @@ export default function GestionCIS() {
             } else {
                 AdaptativeAlert('Médicament signalé avec succès');
                 setSearchQuery('');
-                AsyncStorage.setItem('userInput', '');
+                AsyncStorage.setItem('userInput', '').then(() => {});
             }
         }).catch(() => {
             AdaptativeAlert('Le serveur est injoignable (adresse : ' + SERVER_ADDRESS + ')');

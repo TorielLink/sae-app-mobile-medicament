@@ -92,7 +92,8 @@ export default function SettingsScreen() {
                         <Switch value={cameraAccess} onValueChange={toggleCameraSwitch} color={"#7DAE32"} />
                     </View>
                     {cameraAccess && <Camera style={styles.camera} />}
-                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> : <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
+                    {consentAccepted ? <Text style={styles.consentText}>Vous avez accepté le consentement RGPD.</Text> :
+                        <Text style={styles.consentText}>Vous avez refusé le consentement RGPD.</Text>}
                 </View>
             )}
         </View>

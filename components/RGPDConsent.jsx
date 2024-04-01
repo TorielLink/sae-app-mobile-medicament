@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import {Button} from "react-native-paper";
 
 const GDPRConsent = ({ onAccept, onDecline }) => {
     return (
@@ -8,8 +9,8 @@ const GDPRConsent = ({ onAccept, onDecline }) => {
                 Nous utilisons des cookies pour améliorer votre expérience. Acceptez-vous notre politique de confidentialité ?
             </Text>
             <View style={styles.buttonContainer}>
-                <Button title="Accepter" onPress={onAccept} />
-                <Button title="Refuser" onPress={onDecline} />
+                <Button onPress={onAccept} buttonColor={"#7DAE32"} mode="contained" style={styles.buttonStyle}>Accepter</Button>
+                <Button onPress={onDecline} buttonColor={"#7DAE32"} mode="contained" style={styles.buttonStyle} >Refuser</Button>
             </View>
         </View>
     );
@@ -30,6 +31,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
     },
+    buttonStyle: {
+
+    }
 });
 
 export default GDPRConsent;
